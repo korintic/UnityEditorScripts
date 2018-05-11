@@ -1,4 +1,4 @@
-# UnityEditorScripts
+# Unity Editor Scripts
 Collection of simple Unity editor scripts written to improve workflow and learn C# and Unity editor scripting at the same time.
 
 ## Editor Scripts

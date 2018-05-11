@@ -15,6 +15,5 @@ Menu item is located under the Edit menu.
 ### SceneViewParent
 For parenting objects while working in the SceneView.
 Parents selected objects to the active object when SceneView is the active view.
-Menu item located under Tools menu (creates Tools menu if it doesn't exist)
 
 **Hotkey** Ctrl+f

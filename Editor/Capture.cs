@@ -115,7 +115,7 @@ public class Capture : EditorWindow
         {
             _isTransparent = false;
         }
-        _isTransparent = EditorGUILayout.Toggle("Capture transparency", _isTransparent);
+        _isTransparent = EditorGUILayout.Toggle("Capture transparency:", _isTransparent);
         if (_isTransparent)
         {
             _sizeMultiplier = 1;

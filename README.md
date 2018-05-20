@@ -11,6 +11,8 @@ Menu item is located under Tools menu.
 ![Capture](https://github.com/korintic/UnityEditorScripts/blob/master/Images/Capture.PNG "Capture.cs")
 
 TO DO:
+- [ ] Clean up the code
+- [ ] Reorganize where adding the file extension happens 
 - [ ] Make a version that captures screenshots with a hotkey based on the preferences set
 - [ ] Add option to capture from SceneView
 

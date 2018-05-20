@@ -6,7 +6,7 @@ public class SceneViewParent
     /// <summary>
     /// Parents selected objects to the active object when SceneView is the active view.
     /// </summary>
-    [MenuItem("Tools/Parent %f")]
+    [MenuItem("Tools/SceneView Parent %f")]
     static void SetSceneViewParent()
     {
         Transform[] _transforms = Selection.GetTransforms(SelectionMode.TopLevel);
@@ -31,4 +31,9 @@ public class SceneViewParent
 
     }
 
+    [MenuItem("Tools/SceneView Parent %f", true)]
+    private static bool MenuOptionInvalid()
+    {
+        return (SceneView.sceneViews.Contains(EditorWindow.focusedWindow));
+    }
 }

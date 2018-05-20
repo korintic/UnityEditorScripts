@@ -6,6 +6,7 @@ These scripts work when they are located in an Editor folder in a Unity project.
 
 ### Capture
 For capturing screenshots.
+
 ![Capture](https://github.com/korintic/UnityEditorScripts/blob/master/Images/Capture.PNG "Capture.cs")
 
 TO DO:

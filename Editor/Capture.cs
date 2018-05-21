@@ -1,8 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
 
+[InitializeOnLoad]
 public class Capture : EditorWindow
 {
     //EDITORPREF VARIABLES
@@ -41,10 +42,10 @@ public class Capture : EditorWindow
         _sizeMultiplier = EditorPrefs.GetInt(prefsSizeMultiplier, 1);
         _fileName = EditorPrefs.GetString(prefsFileName, "Screenshot");
         _pathName = EditorPrefs.GetString(prefsPathName, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-        _suffixType = (SUFFIXTYPE)EditorPrefs.GetInt(prefsSuffixType, 1);
+        _suffixType = (SUFFIXTYPE)EditorPrefs.GetInt(prefsSuffixType, 0);
     }
 
-    [MenuItem("Tools/Capture %#t")]
+    [MenuItem("Tools/Capture Options %#w")]
     public static void ShowWindow()
     {
         GetWindow<Capture>("Capture");
@@ -74,7 +75,7 @@ public class Capture : EditorWindow
             {
                 _fileName = _previousFileName;
             }
-            _runningNumber = 0;
+            _runningNumber = 1;
             _fileName = Path.GetFileNameWithoutExtension(_fileName);
             _previousFileName = _fileName;
         }
@@ -127,63 +128,7 @@ public class Capture : EditorWindow
 
         if (GUILayout.Button("Capture",GUILayout.Width(Screen.width-6), GUILayout.Height(40)))
         {
-            if(_pathName == null)
-            {
-                _pathName = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            }
-            if (!Directory.Exists(_pathName))
-            {
-                EditorUtility.DisplayDialog("Alert", "Folder does not exist!", "OK");
-            }
-            else
-            {
-                string _tempFileName = _fileName;
-                string _tempPathName = _pathName;
-                string _fileNameWithSuffix;
-
-                if (_uniqueSuffix)
-                {
-                    _fileNameWithSuffix = AddSuffix(_tempFileName, _suffixType, _runningNumber);
-                    _tempPathName = Path.Combine(_tempPathName, _fileNameWithSuffix);
-                }
-                else
-                {
-                    _tempPathName = Path.GetFullPath(Path.Combine(_tempPathName, _tempFileName + ".png"));
-                }
-
-                if (File.Exists(_tempPathName) && _uniqueSuffix && _suffixType == SUFFIXTYPE.INCREMENT)
-                {
-                    while (File.Exists(_tempPathName))
-                    {
-                        _runningNumber++;
-                        _fileNameWithSuffix = AddSuffix(_fileName, _suffixType, _runningNumber);
-                        _tempPathName = Path.Combine(_pathName, _fileNameWithSuffix);
-                    }
-                }
-
-                if(File.Exists(_tempPathName) && _overwriteWarning)
-                {
-                    int choose =EditorUtility.DisplayDialogComplex("Alert", "File exist!", "Overwrite", "Save with unique suffix", "Cancel");
-                    switch (choose)
-                    {
-                        case 0:
-                            SaveScreenShot(_tempPathName, _sizeMultiplier, _isTransparent);
-
-                            break;
-                        case 1:
-                            _tempPathName = Path.Combine(_pathName, AddSuffix(_fileName, SUFFIXTYPE.DATE, 0));
-                            SaveScreenShot(_tempPathName, _sizeMultiplier, _isTransparent);
-                            break;
-                        case 2:
-                            break;
-                    }
-                }
-                else
-                {
-                    SaveScreenShot(_tempPathName, _sizeMultiplier, _isTransparent);
-                }
-
-            }
+            DoCapture();
         }
 
         EditorGUILayout.Space();
@@ -204,8 +149,24 @@ public class Capture : EditorWindow
             _sizeMultiplier = EditorPrefs.GetInt(prefsSizeMultiplier, 1);
             _fileName = EditorPrefs.GetString(prefsFileName, "Screenshot");
             _pathName = EditorPrefs.GetString(prefsPathName, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-            _suffixType = (SUFFIXTYPE)EditorPrefs.GetInt(prefsSuffixType, 1);
+            _suffixType = (SUFFIXTYPE)EditorPrefs.GetInt(prefsSuffixType, 0);
+
+            EditorPrefs.SetBool(prefsIsTransparent, _isTransparent);
+            EditorPrefs.SetBool(prefsOverwriteWarning, _overwriteWarning);
+            EditorPrefs.SetBool(prefsUniqueSuffix, _uniqueSuffix);
+            EditorPrefs.SetInt(prefsSizeMultiplier, _sizeMultiplier);
+            EditorPrefs.SetString(prefsFileName, _fileName);
+            EditorPrefs.SetString(prefsPathName, _pathName);
+            EditorPrefs.SetInt(prefsSuffixType, (int)_suffixType);
         }
+
+        EditorPrefs.SetBool(prefsIsTransparent, _isTransparent);
+        EditorPrefs.SetBool(prefsOverwriteWarning, _overwriteWarning);
+        EditorPrefs.SetBool(prefsUniqueSuffix, _uniqueSuffix);
+        EditorPrefs.SetInt(prefsSizeMultiplier, _sizeMultiplier);
+        EditorPrefs.SetString(prefsFileName, _fileName);
+        EditorPrefs.SetString(prefsPathName, _pathName);
+        EditorPrefs.SetInt(prefsSuffixType, (int)_suffixType);
     }
 
     private void OnDestroy()
@@ -219,11 +180,72 @@ public class Capture : EditorWindow
         EditorPrefs.SetInt(prefsSuffixType, (int)_suffixType);
     }
 
+    protected void DoCapture()
+    {
+        if (_pathName == null)
+        {
+            _pathName = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        }
+        if (!Directory.Exists(_pathName))
+        {
+            EditorUtility.DisplayDialog("Alert", "Folder does not exist!", "OK");
+        }
+        else
+        {
+            string _tempFileName = _fileName;
+            string _tempPathName = _pathName;
+            string _fileNameWithSuffix;
+
+            if (_uniqueSuffix)
+            {
+                _fileNameWithSuffix = AddSuffix(_tempFileName, _suffixType, _runningNumber);
+                _tempPathName = Path.Combine(_tempPathName, _fileNameWithSuffix);
+            }
+            else
+            {
+                _tempPathName = Path.GetFullPath(Path.Combine(_tempPathName, _tempFileName + ".png"));
+            }
+
+            if (File.Exists(_tempPathName) && _uniqueSuffix && _suffixType == SUFFIXTYPE.INCREMENT)
+            {
+                while (File.Exists(_tempPathName))
+                {
+                    _runningNumber++;
+                    _fileNameWithSuffix = AddSuffix(_fileName, _suffixType, _runningNumber);
+                    _tempPathName = Path.Combine(_pathName, _fileNameWithSuffix);
+                }
+            }
+
+            if (File.Exists(_tempPathName) && _overwriteWarning)
+            {
+                int choose = EditorUtility.DisplayDialogComplex("Alert", "File exist!", "Overwrite", "Save with unique suffix", "Cancel");
+                switch (choose)
+                {
+                    case 0:
+                        SaveScreenShot(_tempPathName, _sizeMultiplier, _isTransparent);
+
+                        break;
+                    case 1:
+                        _tempPathName = Path.Combine(_pathName, AddSuffix(_fileName, SUFFIXTYPE.DATE, 0));
+                        SaveScreenShot(_tempPathName, _sizeMultiplier, _isTransparent);
+                        break;
+                    case 2:
+                        break;
+                }
+            }
+            else
+            {
+                SaveScreenShot(_tempPathName, _sizeMultiplier, _isTransparent);
+            }
+
+        }
+    }
+
     private void SaveScreenShot(string pathName, int sizemultiplier, bool isTransparent)
     {
         if (sizemultiplier > 1)
         {
-            if (EditorApplication.isPlaying)
+            if (EditorApplication.isPlaying && !EditorApplication.isPaused)
             {
                 //This is to make sure the capture is taken from a frame that has finished rendering.
                 //No idea if this actually works like that.
@@ -235,7 +257,7 @@ public class Capture : EditorWindow
         }
         else
         {
-            if (EditorApplication.isPlaying)
+            if (EditorApplication.isPlaying && !EditorApplication.isPaused)
             {
                 EditorApplication.isPaused = true;
                 CaptureScreen(pathName, isTransparent);
@@ -262,7 +284,6 @@ public class Capture : EditorWindow
             fileName += "_" + dateString;
         }
 
-        //fileName = Path.GetFileNameWithoutExtension(fileName);
         fileName += ".png";
         return fileName;
     }

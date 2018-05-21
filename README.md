@@ -8,12 +8,12 @@ These scripts work when they are located in an Editor folder in a Unity project.
 For capturing screenshots.
 Menu item is located under Tools menu.
 
-![Capture Menu](https://github.com/korintic/UnityEditorScripts/blob/master/Images/CaptureMenu.PNG "Capture.cs and CaptureWithHotkey.cs")
+![Capture Menu](https://github.com/korintic/UnityEditorScripts/blob/master/Images/CaptureMenu.png "Capture.cs and CaptureWithHotkey.cs")
 
 Capture Options menu item is for changing preferences and taking screencaptures.
 Capture is for taking screencaptures with a hotkey using the current preferences set.
 
-![Capture Options](https://github.com/korintic/UnityEditorScripts/blob/master/Images/CaptureOptions.PNG "Capture.cs")
+![Capture Options](https://github.com/korintic/UnityEditorScripts/blob/master/Images/CaptureOptions.png "Capture.cs")
 
 **Hotkey** Capture Options Ctrl+Shift+W
 **Hotkey** Capture Ctrl+W

@@ -3,7 +3,6 @@ using UnityEditor;
 using System;
 using System.IO;
 
-[InitializeOnLoad]
 public class Capture : EditorWindow
 {
     //EDITORPREF VARIABLES

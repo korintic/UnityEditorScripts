@@ -37,3 +37,9 @@ For parenting objects while working in the SceneView.
 Parents selected objects to the active object when SceneView is the active view.
 
 **Hotkey** Ctrl+F
+
+### Snapshot Mesh
+Bare bones version of an editor script for taking snapshots of skinned meshes.
+Menu is located under Tools menu. Most of the planned functionality still missing.
+
+![Snapshot Mesh](https://github.com/korintic/UnityEditorScripts/blob/master/Images/SnapshotMesh.png "SnapshotMesh.cs")

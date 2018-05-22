@@ -71,7 +71,7 @@ public class Capture : EditorWindow
         _fileName = EditorGUILayout.TextField(_fileName);
         if (EditorGUI.EndChangeCheck())
         {
-            if(_fileName == "")
+            if (_fileName == "")
             {
                 _fileName = _previousFileName;
             }
@@ -86,7 +86,7 @@ public class Capture : EditorWindow
         EditorGUILayout.BeginVertical();
 
         GUI.enabled = false;
-        EditorGUILayout.LabelField(Path.GetFullPath(Path.Combine(_pathName, Path.GetFileNameWithoutExtension(_fileName)+_suffix+".png")));
+        EditorGUILayout.LabelField(Path.GetFullPath(Path.Combine(_pathName, Path.GetFileNameWithoutExtension(_fileName) + _suffix + ".png")));
         GUI.enabled = true;
 
         EditorGUILayout.Space();
@@ -126,14 +126,14 @@ public class Capture : EditorWindow
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.Space();
 
-        if (GUILayout.Button("Capture",GUILayout.Width(Screen.width-6), GUILayout.Height(40)))
+        if (GUILayout.Button("Capture", GUILayout.Width(Screen.width - 6), GUILayout.Height(40)))
         {
             DoCapture();
         }
 
         EditorGUILayout.Space();
 
-        if (GUILayout.Button("Clear prefs",GUILayout.Width(Screen.width/4)))
+        if (GUILayout.Button("Clear prefs", GUILayout.Width(Screen.width / 4)))
         {
             EditorPrefs.DeleteKey(prefsIsTransparent);
             EditorPrefs.DeleteKey(prefsOverwriteWarning);
@@ -151,33 +151,15 @@ public class Capture : EditorWindow
             _pathName = EditorPrefs.GetString(prefsPathName, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
             _suffixType = (SUFFIXTYPE)EditorPrefs.GetInt(prefsSuffixType, 0);
 
-            EditorPrefs.SetBool(prefsIsTransparent, _isTransparent);
-            EditorPrefs.SetBool(prefsOverwriteWarning, _overwriteWarning);
-            EditorPrefs.SetBool(prefsUniqueSuffix, _uniqueSuffix);
-            EditorPrefs.SetInt(prefsSizeMultiplier, _sizeMultiplier);
-            EditorPrefs.SetString(prefsFileName, _fileName);
-            EditorPrefs.SetString(prefsPathName, _pathName);
-            EditorPrefs.SetInt(prefsSuffixType, (int)_suffixType);
+            SaveEditorPrefs();
         }
 
-        EditorPrefs.SetBool(prefsIsTransparent, _isTransparent);
-        EditorPrefs.SetBool(prefsOverwriteWarning, _overwriteWarning);
-        EditorPrefs.SetBool(prefsUniqueSuffix, _uniqueSuffix);
-        EditorPrefs.SetInt(prefsSizeMultiplier, _sizeMultiplier);
-        EditorPrefs.SetString(prefsFileName, _fileName);
-        EditorPrefs.SetString(prefsPathName, _pathName);
-        EditorPrefs.SetInt(prefsSuffixType, (int)_suffixType);
+        SaveEditorPrefs();
     }
 
     private void OnDestroy()
     {
-        EditorPrefs.SetBool(prefsIsTransparent, _isTransparent);
-        EditorPrefs.SetBool(prefsOverwriteWarning, _overwriteWarning);
-        EditorPrefs.SetBool(prefsUniqueSuffix, _uniqueSuffix);
-        EditorPrefs.SetInt(prefsSizeMultiplier, _sizeMultiplier);
-        EditorPrefs.SetString(prefsFileName, _fileName);
-        EditorPrefs.SetString(prefsPathName, _pathName);
-        EditorPrefs.SetInt(prefsSuffixType, (int)_suffixType);
+        SaveEditorPrefs();
     }
 
     protected void DoCapture()
@@ -199,7 +181,7 @@ public class Capture : EditorWindow
             if (_uniqueSuffix)
             {
                 _fileNameWithSuffix = AddSuffix(_tempFileName, _suffixType, _runningNumber);
-                _tempPathName = Path.Combine(_tempPathName, _fileNameWithSuffix);
+                _tempPathName = Path.Combine(_tempPathName, _fileNameWithSuffix + ".png");
             }
             else
             {
@@ -212,7 +194,7 @@ public class Capture : EditorWindow
                 {
                     _runningNumber++;
                     _fileNameWithSuffix = AddSuffix(_fileName, _suffixType, _runningNumber);
-                    _tempPathName = Path.Combine(_pathName, _fileNameWithSuffix);
+                    _tempPathName = Path.Combine(_pathName, _fileNameWithSuffix + ".png");
                 }
             }
 
@@ -284,7 +266,6 @@ public class Capture : EditorWindow
             fileName += "_" + dateString;
         }
 
-        fileName += ".png";
         return fileName;
     }
 
@@ -292,12 +273,18 @@ public class Capture : EditorWindow
     {
         Camera _mainCamera = Camera.main;
         CameraClearFlags _flag = _mainCamera.clearFlags;
-        Texture2D _texture = new Texture2D(_mainCamera.pixelWidth, _mainCamera.pixelHeight, TextureFormat.RGBA32, false);
+
+        Texture2D _texture;
         RenderTexture _renderTexture = new RenderTexture(_mainCamera.pixelWidth, _mainCamera.pixelHeight, 32);
 
         if (isTransparent)
         {
+            _texture = new Texture2D(_mainCamera.pixelWidth, _mainCamera.pixelHeight, TextureFormat.RGBA32, false);
             _mainCamera.clearFlags = CameraClearFlags.Depth;
+        }
+        else
+        {
+            _texture = new Texture2D(_mainCamera.pixelWidth, _mainCamera.pixelHeight, TextureFormat.RGB24, false);
         }
 
         _mainCamera.targetTexture = _renderTexture;
@@ -305,6 +292,24 @@ public class Capture : EditorWindow
         RenderTexture.active = _renderTexture;
 
         _texture.ReadPixels(new Rect(0, 0, _mainCamera.pixelWidth, _mainCamera.pixelHeight), 0, 0, false);
+
+        //Unpremultiply alpha
+        if (isTransparent)
+        {
+            Color32[] _premultCol = _texture.GetPixels32();
+            for(int i = 0; i < _premultCol.Length; ++i)
+            {
+                Color col = _premultCol[i];
+                if(col.a != 0)
+                {
+                    col.r = ((col.r / col.a));
+                    col.g = ((col.g / col.a));
+                    col.b = ((col.b / col.a));
+                }
+                _premultCol[i] = col;
+             }
+            _texture.SetPixels32(_premultCol);
+        }
         _texture.Apply();
 
         byte[] bytes = _texture.EncodeToPNG();
@@ -319,6 +324,17 @@ public class Capture : EditorWindow
         _mainCamera.targetTexture = null;
         DestroyImmediate(_renderTexture);
         DestroyImmediate(_texture);
+    }
+
+    private void SaveEditorPrefs()
+    {
+        EditorPrefs.SetBool(prefsIsTransparent, _isTransparent);
+        EditorPrefs.SetBool(prefsOverwriteWarning, _overwriteWarning);
+        EditorPrefs.SetBool(prefsUniqueSuffix, _uniqueSuffix);
+        EditorPrefs.SetInt(prefsSizeMultiplier, _sizeMultiplier);
+        EditorPrefs.SetString(prefsFileName, _fileName);
+        EditorPrefs.SetString(prefsPathName, _pathName);
+        EditorPrefs.SetInt(prefsSuffixType, (int)_suffixType);
     }
 
 }

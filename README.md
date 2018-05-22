@@ -21,8 +21,7 @@ Capture is for taking screencaptures with a hotkey using the current preferences
 
 TO DO:
 - [ ] See if the code can be simplified/ cleaned up
-- [ ] Reorganize where adding the file extension happens 
-- [ ] Saving Editorprefs seemed to not work right all the time. Check where getting and setting them makes sense.
+- [x] Reorganize where adding the file extension happens 
 - [x] Make a version that captures screenshots with a hotkey based on the preferences set
 - [ ] Add option to capture from SceneView
 

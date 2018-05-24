@@ -35,13 +35,7 @@ public class Capture : EditorWindow
 
     private void OnEnable()
     {
-        _isTransparent = EditorPrefs.GetBool(prefsIsTransparent, false);
-        _overwriteWarning = EditorPrefs.GetBool(prefsOverwriteWarning, false);
-        _uniqueSuffix = EditorPrefs.GetBool(prefsUniqueSuffix, false);
-        _sizeMultiplier = EditorPrefs.GetInt(prefsSizeMultiplier, 1);
-        _fileName = EditorPrefs.GetString(prefsFileName, "Screenshot");
-        _pathName = EditorPrefs.GetString(prefsPathName, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-        _suffixType = (SUFFIXTYPE)EditorPrefs.GetInt(prefsSuffixType, 0);
+        GetEditorPrefs();
     }
 
     [MenuItem("Tools/Capture Options %#w")]
@@ -67,7 +61,7 @@ public class Capture : EditorWindow
 
         EditorGUILayout.LabelField("File name:", EditorStyles.boldLabel);
         EditorGUI.BeginChangeCheck();
-        _fileName = EditorGUILayout.TextField(_fileName);
+        _fileName = EditorGUILayout.TextField(_fileName, GUILayout.MaxWidth(400));
         if (EditorGUI.EndChangeCheck())
         {
             if (_fileName == "")
@@ -95,32 +89,24 @@ public class Capture : EditorWindow
         if (!_uniqueSuffix)
         {
             GUI.enabled = false;
-            EditorGUILayout.EnumPopup("Suffix type:", _suffixType);
+            EditorGUILayout.EnumPopup("Suffix type:", _suffixType, GUILayout.MaxWidth(250));
             GUI.enabled = true;
             _suffix = "";
 
         }
         else
         {
-            _suffixType = (SUFFIXTYPE)EditorGUILayout.EnumPopup("Suffix type:", _suffixType);
+            _suffixType = (SUFFIXTYPE)EditorGUILayout.EnumPopup("Suffix type:", _suffixType, GUILayout.MaxWidth(250));
             _suffix = "_suffix";
         }
 
         EditorGUILayout.EndVertical();
         EditorGUILayout.BeginHorizontal();
 
-        _sizeMultiplier = EditorGUILayout.IntField("Image size multiplier:", _sizeMultiplier);
+        _sizeMultiplier = EditorGUILayout.IntField("Image size multiplier:", _sizeMultiplier, GUILayout.MaxWidth(200));
         _sizeMultiplier = Mathf.Clamp(_sizeMultiplier, 1, 10);
-        if (_sizeMultiplier > 1)
-        {
-            _isTransparent = false;
-        }
-        _isTransparent = EditorGUILayout.Toggle("Capture transparency:", _isTransparent);
-        if (_isTransparent)
-        {
-            _sizeMultiplier = 1;
-        }
 
+        _isTransparent = EditorGUILayout.Toggle("Capture transparency:", _isTransparent);
 
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.Space();
@@ -142,13 +128,7 @@ public class Capture : EditorWindow
             EditorPrefs.DeleteKey(prefsPathName);
             EditorPrefs.DeleteKey(prefsSuffixType);
 
-            _isTransparent = EditorPrefs.GetBool(prefsIsTransparent, false);
-            _overwriteWarning = EditorPrefs.GetBool(prefsOverwriteWarning, false);
-            _uniqueSuffix = EditorPrefs.GetBool(prefsUniqueSuffix, false);
-            _sizeMultiplier = EditorPrefs.GetInt(prefsSizeMultiplier, 1);
-            _fileName = EditorPrefs.GetString(prefsFileName, "Screenshot");
-            _pathName = EditorPrefs.GetString(prefsPathName, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-            _suffixType = (SUFFIXTYPE)EditorPrefs.GetInt(prefsSuffixType, 0);
+            GetEditorPrefs();
 
             SaveEditorPrefs();
         }
@@ -173,42 +153,42 @@ public class Capture : EditorWindow
         }
         else
         {
-            string _tempFileName = _fileName;
-            string _tempPathName = _pathName;
-            string _fileNameWithSuffix;
+            string tempFileName = _fileName;
+            string tempPathName = _pathName;
+            string fileNameWithSuffix;
 
             if (_uniqueSuffix)
             {
-                _fileNameWithSuffix = AddSuffix(_tempFileName, _suffixType, _runningNumber);
-                _tempPathName = Path.Combine(_tempPathName, _fileNameWithSuffix + ".png");
+                fileNameWithSuffix = AddSuffix(tempFileName, _suffixType, _runningNumber);
+                tempPathName = Path.Combine(tempPathName, fileNameWithSuffix + ".png");
             }
             else
             {
-                _tempPathName = Path.GetFullPath(Path.Combine(_tempPathName, _tempFileName + ".png"));
+                tempPathName = Path.GetFullPath(Path.Combine(tempPathName, tempFileName + ".png"));
             }
 
-            if (File.Exists(_tempPathName) && _uniqueSuffix && _suffixType == SUFFIXTYPE.INCREMENT)
+            if (File.Exists(tempPathName) && _uniqueSuffix && _suffixType == SUFFIXTYPE.INCREMENT)
             {
-                while (File.Exists(_tempPathName))
+                while (File.Exists(tempPathName))
                 {
                     _runningNumber++;
-                    _fileNameWithSuffix = AddSuffix(_fileName, _suffixType, _runningNumber);
-                    _tempPathName = Path.Combine(_pathName, _fileNameWithSuffix + ".png");
+                    fileNameWithSuffix = AddSuffix(_fileName, _suffixType, _runningNumber);
+                    tempPathName = Path.Combine(_pathName, fileNameWithSuffix + ".png");
                 }
             }
 
-            if (File.Exists(_tempPathName) && _overwriteWarning)
+            if (File.Exists(tempPathName) && _overwriteWarning)
             {
                 int choose = EditorUtility.DisplayDialogComplex("Alert", "File exist!", "Overwrite", "Save with unique suffix", "Cancel");
                 switch (choose)
                 {
                     case 0:
-                        SaveScreenShot(_tempPathName, _sizeMultiplier, _isTransparent);
+                        SaveScreenShot(tempPathName, _sizeMultiplier, _isTransparent);
 
                         break;
                     case 1:
-                        _tempPathName = Path.Combine(_pathName, AddSuffix(_fileName, SUFFIXTYPE.DATE, 0));
-                        SaveScreenShot(_tempPathName, _sizeMultiplier, _isTransparent);
+                        tempPathName = Path.Combine(_pathName, AddSuffix(_fileName, SUFFIXTYPE.DATE, 0)+".png");
+                        SaveScreenShot(tempPathName, _sizeMultiplier, _isTransparent);
                         break;
                     case 2:
                         break;
@@ -216,7 +196,7 @@ public class Capture : EditorWindow
             }
             else
             {
-                SaveScreenShot(_tempPathName, _sizeMultiplier, _isTransparent);
+                SaveScreenShot(tempPathName, _sizeMultiplier, _isTransparent);
             }
 
         }
@@ -224,28 +204,15 @@ public class Capture : EditorWindow
 
     private void SaveScreenShot(string pathName, int sizemultiplier, bool isTransparent)
     {
-        if (sizemultiplier > 1)
+        //This is to make sure the capture is taken from a frame that has finished rendering.
+        //o idea if this actually works like that.
+        if (EditorApplication.isPlaying && !EditorApplication.isPaused)
         {
-            if (EditorApplication.isPlaying && !EditorApplication.isPaused)
-            {
-                //This is to make sure the capture is taken from a frame that has finished rendering.
-                //No idea if this actually works like that.
-                EditorApplication.isPaused = true;
-                ScreenCapture.CaptureScreenshot(pathName, sizemultiplier);
-                EditorApplication.isPaused = false;
-            }
-            ScreenCapture.CaptureScreenshot(pathName, sizemultiplier);
+            EditorApplication.isPaused = true;
+            CaptureScreen(pathName, isTransparent, _sizeMultiplier);
+            EditorApplication.isPaused = false;
         }
-        else
-        {
-            if (EditorApplication.isPlaying && !EditorApplication.isPaused)
-            {
-                EditorApplication.isPaused = true;
-                CaptureScreen(pathName, isTransparent);
-                EditorApplication.isPaused = false;
-            }
-            CaptureScreen(pathName, isTransparent);
-        }
+        CaptureScreen(pathName, isTransparent, _sizeMultiplier);
     }
 
     private string AddSuffix(string fileName, SUFFIXTYPE suffixtype, int runningNumber)
@@ -268,61 +235,75 @@ public class Capture : EditorWindow
         return fileName;
     }
 
-    private void CaptureScreen(string pathName, bool isTransparent)
+    private void CaptureScreen(string pathName, bool isTransparent, int sizeMultiplier)
     {
-        Camera _mainCamera = Camera.main;
-        CameraClearFlags _flag = _mainCamera.clearFlags;
+        Camera mainCamera = Camera.main;
+        CameraClearFlags _flag = mainCamera.clearFlags;
+        float defaultAspect = mainCamera.aspect;
 
-        Texture2D _texture;
-        RenderTexture _renderTexture = new RenderTexture(_mainCamera.pixelWidth, _mainCamera.pixelHeight, 32);
+        Texture2D tex;
+        RenderTexture renderTex = new RenderTexture(mainCamera.pixelWidth * sizeMultiplier, mainCamera.pixelHeight * sizeMultiplier, 32);
 
         if (isTransparent)
         {
-            _texture = new Texture2D(_mainCamera.pixelWidth, _mainCamera.pixelHeight, TextureFormat.RGBA32, false);
-            _mainCamera.clearFlags = CameraClearFlags.Depth;
+            tex = new Texture2D(mainCamera.pixelWidth * sizeMultiplier, mainCamera.pixelHeight * sizeMultiplier, TextureFormat.RGBA32, false);
+            mainCamera.clearFlags = CameraClearFlags.Depth;
         }
         else
         {
-            _texture = new Texture2D(_mainCamera.pixelWidth, _mainCamera.pixelHeight, TextureFormat.RGB24, false);
+            tex = new Texture2D(mainCamera.pixelWidth * sizeMultiplier, mainCamera.pixelHeight * sizeMultiplier, TextureFormat.RGB24, false);
         }
 
-        _mainCamera.targetTexture = _renderTexture;
-        _mainCamera.Render();
-        RenderTexture.active = _renderTexture;
+        mainCamera.targetTexture = renderTex;
+        mainCamera.aspect = (float)(mainCamera.pixelWidth * sizeMultiplier) / (float)(mainCamera.pixelHeight * sizeMultiplier);
+        mainCamera.Render();
+        RenderTexture.active = renderTex;
 
-        _texture.ReadPixels(new Rect(0, 0, _mainCamera.pixelWidth, _mainCamera.pixelHeight), 0, 0, false);
+        tex.ReadPixels(new Rect(0, 0, mainCamera.pixelWidth, mainCamera.pixelHeight), 0, 0, false);
 
         //Unpremultiply alpha
         if (isTransparent)
         {
-            Color32[] _premultCol = _texture.GetPixels32();
-            for(int i = 0; i < _premultCol.Length; ++i)
+            Color32[] premultCol = tex.GetPixels32();
+            for(int i = 0; i < premultCol.Length; ++i)
             {
-                Color col = _premultCol[i];
+                Color col = premultCol[i];
                 if(col.a != 0)
                 {
                     col.r = ((col.r / col.a));
                     col.g = ((col.g / col.a));
                     col.b = ((col.b / col.a));
                 }
-                _premultCol[i] = col;
+                premultCol[i] = col;
              }
-            _texture.SetPixels32(_premultCol);
+            tex.SetPixels32(premultCol);
         }
-        _texture.Apply();
+        tex.Apply();
 
-        byte[] bytes = _texture.EncodeToPNG();
+        byte[] bytes = tex.EncodeToPNG();
         File.WriteAllBytes(pathName, bytes);
 
         if (isTransparent)
         {
-            _mainCamera.clearFlags = _flag;
+            mainCamera.clearFlags = _flag;
         }
 
         RenderTexture.active = null;
-        _mainCamera.targetTexture = null;
-        DestroyImmediate(_renderTexture);
-        DestroyImmediate(_texture);
+        mainCamera.targetTexture = null;
+        mainCamera.aspect = defaultAspect;
+        DestroyImmediate(renderTex);
+        DestroyImmediate(tex);
+    }
+
+    private void GetEditorPrefs()
+    {
+        _isTransparent = EditorPrefs.GetBool(prefsIsTransparent, false);
+        _overwriteWarning = EditorPrefs.GetBool(prefsOverwriteWarning, true);
+        _uniqueSuffix = EditorPrefs.GetBool(prefsUniqueSuffix, false);
+        _sizeMultiplier = EditorPrefs.GetInt(prefsSizeMultiplier, 1);
+        _fileName = EditorPrefs.GetString(prefsFileName, "Screenshot");
+        _pathName = EditorPrefs.GetString(prefsPathName, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+        _suffixType = (SUFFIXTYPE)EditorPrefs.GetInt(prefsSuffixType, 0);
     }
 
     private void SaveEditorPrefs()

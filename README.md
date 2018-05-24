@@ -5,7 +5,9 @@ Collection of simple Unity editor scripts written to improve workflow and learn 
 These scripts work when they are located in an Editor folder in a Unity project.
 
 ### Capture
-For capturing screenshots.
+For capturing screenshots. 
+Uses camera with MainCamera tag.
+Can take oversized screenshots and capture transparency.
 Menu item is located under Tools menu.
 
 ![Capture Menu](https://github.com/korintic/UnityEditorScripts/blob/master/Images/CaptureMenu.png "Capture.cs and CaptureWithHotkey.cs")

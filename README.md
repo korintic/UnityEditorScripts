@@ -7,7 +7,7 @@ These scripts work when they are located in an Editor folder in a Unity project.
 ### Capture
 For capturing screenshots. 
 Uses camera with MainCamera tag.
-Can take oversized screenshots and capture transparency.
+Can take oversized screenshots, capture transparency and capture from Scene View.
 Menu item is located under Tools menu.
 
 ![Capture Menu](https://github.com/korintic/UnityEditorScripts/blob/master/Images/CaptureMenu.png "Capture.cs and CaptureWithHotkey.cs")
@@ -25,7 +25,8 @@ TO DO:
 - [ ] See if the code can be simplified/ cleaned up
 - [x] Reorganize where adding the file extension happens 
 - [x] Make a version that captures screenshots with a hotkey based on the preferences set
-- [ ] Add option to capture from SceneView
+- [x] Add option to capture from SceneView
+- [ ] Add check if images are being saved inside the project
 
 ### ToggleSelection
 For toggling object selection between none and all.

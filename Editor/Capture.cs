@@ -6,9 +6,10 @@ using System.IO;
 public class Capture : EditorWindow
 {
     //EDITORPREF VARIABLES
-    private static string prefsIsTransparent = "Capture._isTransparent";
+    private string prefsIsTransparent = "Capture._isTransparent";
     private string prefsOverwriteWarning = "Capture._overwriteWarning";
     private string prefsUniqueSuffix = "Capture._uniqueSuffix";
+    private string prefsCaptureSceneView = "Capture._captureSceneView";
     private string prefsSizeMultiplier = "Capture._sizeMultiplier";
     private string prefsFileName = "Capture._fileName";
     private string prefsPathName = "Capture._pathName";
@@ -24,6 +25,7 @@ public class Capture : EditorWindow
     private bool _uniqueSuffix;
     private bool _overwriteWarning;
     private bool _isTransparent;
+    private bool _captureSceneView;
 
     private enum SUFFIXTYPE
     {
@@ -33,7 +35,7 @@ public class Capture : EditorWindow
     private SUFFIXTYPE _suffixType;
     private string _suffix;
 
-    private void OnEnable()
+    private void Awake()
     {
         GetEditorPrefs();
     }
@@ -61,7 +63,7 @@ public class Capture : EditorWindow
 
         EditorGUILayout.LabelField("File name:", EditorStyles.boldLabel);
         EditorGUI.BeginChangeCheck();
-        _fileName = EditorGUILayout.TextField(_fileName, GUILayout.MaxWidth(400));
+        _fileName = EditorGUILayout.TextField(_fileName, GUILayout.MaxWidth(300));
         if (EditorGUI.EndChangeCheck())
         {
             if (_fileName == "")
@@ -109,6 +111,7 @@ public class Capture : EditorWindow
         _isTransparent = EditorGUILayout.Toggle("Capture transparency:", _isTransparent);
 
         EditorGUILayout.EndHorizontal();
+        _captureSceneView = EditorGUILayout.Toggle("Capture SceneView:", _captureSceneView);
         EditorGUILayout.Space();
 
         if (GUILayout.Button("Capture", GUILayout.Width(Screen.width - 6), GUILayout.Height(40)))
@@ -117,12 +120,13 @@ public class Capture : EditorWindow
         }
 
         EditorGUILayout.Space();
-
-        if (GUILayout.Button("Clear prefs", GUILayout.Width(Screen.width / 4)))
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Clear prefs"))
         {
             EditorPrefs.DeleteKey(prefsIsTransparent);
             EditorPrefs.DeleteKey(prefsOverwriteWarning);
             EditorPrefs.DeleteKey(prefsUniqueSuffix);
+            EditorPrefs.DeleteKey(prefsCaptureSceneView);
             EditorPrefs.DeleteKey(prefsSizeMultiplier);
             EditorPrefs.DeleteKey(prefsFileName);
             EditorPrefs.DeleteKey(prefsPathName);
@@ -132,7 +136,8 @@ public class Capture : EditorWindow
 
             SaveEditorPrefs();
         }
-
+        GUILayout.Space(Screen.width / 1.5f);
+        EditorGUILayout.EndHorizontal();
         SaveEditorPrefs();
     }
 
@@ -205,14 +210,14 @@ public class Capture : EditorWindow
     private void SaveScreenShot(string pathName, int sizemultiplier, bool isTransparent)
     {
         //This is to make sure the capture is taken from a frame that has finished rendering.
-        //o idea if this actually works like that.
+        //No idea if this actually works like that.
         if (EditorApplication.isPlaying && !EditorApplication.isPaused)
         {
             EditorApplication.isPaused = true;
-            CaptureScreen(pathName, isTransparent, _sizeMultiplier);
+            CaptureScreen(pathName, isTransparent, _sizeMultiplier, _captureSceneView);
             EditorApplication.isPaused = false;
         }
-        CaptureScreen(pathName, isTransparent, _sizeMultiplier);
+        CaptureScreen(pathName, isTransparent, _sizeMultiplier, _captureSceneView);
     }
 
     private string AddSuffix(string fileName, SUFFIXTYPE suffixtype, int runningNumber)
@@ -235,9 +240,30 @@ public class Capture : EditorWindow
         return fileName;
     }
 
-    private void CaptureScreen(string pathName, bool isTransparent, int sizeMultiplier)
+    private void CaptureScreen(string pathName, bool isTransparent, int sizeMultiplier, bool captureSceneView)
     {
-        Camera mainCamera = Camera.main;
+        Camera mainCamera;
+
+        if (!captureSceneView)
+        {
+            mainCamera = Camera.main;
+            //If camera to render from is not tagged to be MainCamera use:
+            //Camera mainCamera = GameObject.FindGameObjectWithTag("RenderCamera").GetComponent<Camera>();
+            //Replace "RenderCamera" with the tag of the camera you want to render from.
+        }
+        else
+        {
+            if(SceneView.GetAllSceneCameras().Length != 0)
+            {
+                mainCamera = SceneView.lastActiveSceneView.camera;
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("Alert", "No Scene View found!\nCapturing from Game View.", "OK");
+                mainCamera = Camera.main;
+            }
+        }
+
         CameraClearFlags _flag = mainCamera.clearFlags;
         float defaultAspect = mainCamera.aspect;
 
@@ -300,6 +326,7 @@ public class Capture : EditorWindow
         _isTransparent = EditorPrefs.GetBool(prefsIsTransparent, false);
         _overwriteWarning = EditorPrefs.GetBool(prefsOverwriteWarning, true);
         _uniqueSuffix = EditorPrefs.GetBool(prefsUniqueSuffix, false);
+        _captureSceneView =  EditorPrefs.GetBool(prefsCaptureSceneView, false);
         _sizeMultiplier = EditorPrefs.GetInt(prefsSizeMultiplier, 1);
         _fileName = EditorPrefs.GetString(prefsFileName, "Screenshot");
         _pathName = EditorPrefs.GetString(prefsPathName, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
@@ -311,6 +338,7 @@ public class Capture : EditorWindow
         EditorPrefs.SetBool(prefsIsTransparent, _isTransparent);
         EditorPrefs.SetBool(prefsOverwriteWarning, _overwriteWarning);
         EditorPrefs.SetBool(prefsUniqueSuffix, _uniqueSuffix);
+        EditorPrefs.SetBool(prefsCaptureSceneView, _captureSceneView);
         EditorPrefs.SetInt(prefsSizeMultiplier, _sizeMultiplier);
         EditorPrefs.SetString(prefsFileName, _fileName);
         EditorPrefs.SetString(prefsPathName, _pathName);

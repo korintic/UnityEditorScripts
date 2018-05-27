@@ -94,7 +94,6 @@ public class Capture : EditorWindow
             EditorGUILayout.EnumPopup("Suffix type:", _suffixType, GUILayout.MaxWidth(250));
             GUI.enabled = true;
             _suffix = "";
-
         }
         else
         {
@@ -227,7 +226,6 @@ public class Capture : EditorWindow
 
         if(suffixtype == SUFFIXTYPE.INCREMENT)
         {
-
             fileName += "_" + runningNumber.ToString("D4");
             runningNumber++;
         }
@@ -264,7 +262,7 @@ public class Capture : EditorWindow
             }
         }
 
-        CameraClearFlags _flag = mainCamera.clearFlags;
+        CameraClearFlags flag = mainCamera.clearFlags;
         float defaultAspect = mainCamera.aspect;
 
         Texture2D tex;
@@ -311,7 +309,7 @@ public class Capture : EditorWindow
 
         if (isTransparent)
         {
-            mainCamera.clearFlags = _flag;
+            mainCamera.clearFlags = flag;
         }
 
         RenderTexture.active = null;

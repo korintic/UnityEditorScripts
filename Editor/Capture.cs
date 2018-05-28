@@ -246,7 +246,7 @@ public class Capture : EditorWindow
         {
             mainCamera = Camera.main;
             //If camera to render from is not tagged to be MainCamera use:
-            //Camera mainCamera = GameObject.FindGameObjectWithTag("RenderCamera").GetComponent<Camera>();
+            //mainCamera = GameObject.FindGameObjectWithTag("RenderCamera").GetComponent<Camera>();
             //Replace "RenderCamera" with the tag of the camera you want to render from.
         }
         else
@@ -259,6 +259,7 @@ public class Capture : EditorWindow
             {
                 EditorUtility.DisplayDialog("Alert", "No Scene View found!\nCapturing from Game View.", "OK");
                 mainCamera = Camera.main;
+                //mainCamera = GameObject.FindGameObjectWithTag("RenderCamera").GetComponent<Camera>();
             }
         }
 

@@ -23,6 +23,7 @@ Capture is for taking screencaptures with a hotkey using the current preferences
 
 TO DO:
 - [ ] See if the code can be simplified/ cleaned up
+- [ ] Reorganize layout groups
 - [x] Reorganize where adding the file extension happens 
 - [x] Make a version that captures screenshots with a hotkey based on the preferences set
 - [x] Add option to capture from SceneView

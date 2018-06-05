@@ -47,3 +47,11 @@ Bare bones version of an editor script for taking snapshots of skinned meshes.
 Menu is located under Tools menu. Most of the planned functionality still missing.
 
 ![Snapshot Mesh](https://github.com/korintic/UnityEditorScripts/blob/master/Images/SnapshotMesh.png "SnapshotMesh.cs")
+
+TO DO:
+- [ ] Clean up/ simplify code
+- [ ] Add support for material duplication when keep rig selected
+- [ ] Add Editorprefs support
+- [ ] Rethink naming of new assets
+- [ ] Study how to properly deleted script components that are depended on each other
+- [ ] Make relationship of preferences obvious (which ones are relevant in which cases)

@@ -47,7 +47,7 @@ public class LockTransforms : EditorWindow
                 if (!_lockToggle)
                 {
                     EditorApplication.update += Update;
-                    _lockLabel = "Unlock Selected";
+                    _lockLabel = "Unlock";
                     _lockToggle = true;
                 }
                 else

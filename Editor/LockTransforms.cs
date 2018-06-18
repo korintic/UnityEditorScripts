@@ -8,8 +8,8 @@ public class LockTransforms : EditorWindow
     private bool _lockedFoldout;
     private bool _lockToggle;
     private string _lockLabel;
-    private List<Vector3> _lossyScale;
 
+    private List<Vector3> _lossyScale;
     private List<Vector3> _localPositions;
     private List<Vector3> _localScales;
     private List<Quaternion> _localRotations;

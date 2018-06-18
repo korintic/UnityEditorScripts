@@ -24,6 +24,7 @@ Capture is for taking screencaptures with a hotkey using the current preferences
 TO DO:
 - [ ] See if the code can be simplified/ cleaned up
 - [ ] Reorganize layout groups
+- [ ] Add possibility to choose camera
 - [x] Reorganize where adding the file extension happens 
 - [x] Make a version that captures screenshots with a hotkey based on the preferences set
 - [x] Add option to capture from SceneView
@@ -52,5 +53,17 @@ TO DO:
 - [ ] Add support for material duplication when keep rig selected
 - [ ] Add Editorprefs support
 - [ ] Rethink naming of new assets
+- [ ] Check if assets paths are valid before doing any operations
 - [ ] Study how to properly deleted script components that are depended on each other
 - [ ] Make relationship of preferences obvious (which ones are relevant in which cases)
+- [ ] Add support for Undo
+
+### Lock Transforms
+Work in progress version of an editor script for locking transforms of selected objects.
+Made mainly to ease working with UI elements so that it is possible to transform the parent object without affecting the children.
+
+![LockTransforms](https://github.com/korintic/UnityEditorScripts/blob/master/Images/LockTransforms.png "LockTransforms.cs")
+
+TO DO:
+- [ ] Add support for Undo
+- [ ] Find out logic flaw that causes index out of range exceptions at times

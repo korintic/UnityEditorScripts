@@ -66,4 +66,4 @@ Made mainly to ease working with UI elements so that it is possible to transform
 
 TO DO:
 - [ ] Add support for Undo
-- [ ] Find out logic flaw that causes index out of range exceptions at times
+- [ ] Find logic flaw that causes index out of range exceptions at times

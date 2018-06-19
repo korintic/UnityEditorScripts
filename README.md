@@ -43,6 +43,15 @@ Parents selected objects to the active object when SceneView is the active view.
 
 **Hotkey** Ctrl+F
 
+### Lock Transforms
+For locking transforms of selected objects.
+Made mainly to ease working with UI elements so that it is possible to transform the parent object without affecting the children.
+
+![LockTransforms](https://github.com/korintic/UnityEditorScripts/blob/master/Images/LockTransforms.png "LockTransforms.cs")
+
+TO DO:
+- [ ] Add proper support for Undo
+
 ### Snapshot Mesh
 Work in progress version of an editor script for taking snapshots of skinned meshes.
 
@@ -57,12 +66,3 @@ TO DO:
 - [ ] Study how to properly deleted script components that are depended on each other
 - [ ] Make relationship of preferences obvious (which ones are relevant in which cases)
 - [ ] Add support for Undo
-
-### Lock Transforms
-For locking transforms of selected objects.
-Made mainly to ease working with UI elements so that it is possible to transform the parent object without affecting the children.
-
-![LockTransforms](https://github.com/korintic/UnityEditorScripts/blob/master/Images/LockTransforms.png "LockTransforms.cs")
-
-TO DO:
-- [ ] Add proper support for Undo

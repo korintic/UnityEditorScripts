@@ -11,7 +11,6 @@ public class LockTransforms : EditorWindow
 
     private List<Vector3> _lossyScale;
     private List<Vector3> _localPositions;
-    private List<Vector3> _localScales;
     private List<Quaternion> _localRotations;
     private Transform[] _transformsToLock;
     private List<string> _lockedObjects;
@@ -20,7 +19,6 @@ public class LockTransforms : EditorWindow
     {
         _lossyScale = new List<Vector3>();
         _localPositions = new List<Vector3>();
-        _localScales = new List<Vector3>();
         _localRotations = new List<Quaternion>();
         _lockedObjects = new List<string>();
         _lockToggle = false;
@@ -62,7 +60,6 @@ public class LockTransforms : EditorWindow
                     _lockToggle = false;
                     _localPositions.Clear();
                     _localRotations.Clear();
-                    _localScales.Clear();
                     _lockedObjects.Clear();
                     _lossyScale.Clear();
                 }
@@ -76,7 +73,6 @@ public class LockTransforms : EditorWindow
                     _lockToggle = false;
                     _localPositions.Clear();
                     _localRotations.Clear();
-                    _localScales.Clear();
                     _lockedObjects.Clear();
                     _lossyScale.Clear();
                 }
@@ -110,19 +106,11 @@ public class LockTransforms : EditorWindow
             EditorGUILayout.LabelField("No objects locked.");
             GUI.enabled = true;
         }
-
-
-
     }
 
     private void OnDestroy()
     {
         EditorApplication.update -= Update;
-        _localPositions.Clear();
-        _localRotations.Clear();
-        _localScales.Clear();
-        _lockedObjects.Clear();
-        _lossyScale.Clear();
     }
 
     private void Update()
@@ -137,8 +125,8 @@ public class LockTransforms : EditorWindow
                 {
                     _transformsToLock[i].localScale = Vector3.one;
                     _transformsToLock[i].localScale = new Vector3(_lossyScale[i].x / _transformsToLock[i].lossyScale.x,
-                                                                 _lossyScale[i].y / _transformsToLock[i].lossyScale.y,
-                                                                 _lossyScale[i].z / _transformsToLock[i].lossyScale.z);
+                                                                  _lossyScale[i].y / _transformsToLock[i].lossyScale.y,
+                                                                  _lossyScale[i].z / _transformsToLock[i].lossyScale.z);
                 }
 
             }
@@ -152,7 +140,6 @@ public class LockTransforms : EditorWindow
             _localPositions.Add(_transformsToLock[i].position);
             _localRotations.Add(_transformsToLock[i].rotation);
             _localRotations[i] = _transformsToLock[i].rotation;
-            _localScales.Add(_transformsToLock[i].localScale);
             _lossyScale.Add(_transformsToLock[i].lossyScale);
         }
 

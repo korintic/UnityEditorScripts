@@ -19,10 +19,10 @@ public class LockTransforms : EditorWindow
     private void Awake()
     {
     	_lossyScale = new List<Vector3>();
-		_localPositions = new List<Vector3>();
-		_localScales = new List<Vector3>();
-		_localRotations = new List<Quaternion>();
-		_lockedObjects = new List<string>();
+	_localPositions = new List<Vector3>();
+	_localScales = new List<Vector3>();
+	_localRotations = new List<Quaternion>();
+	_lockedObjects = new List<string>();
         _lockToggle = false;
         _lockLabel = "Lock Selected";
     }

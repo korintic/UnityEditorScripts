@@ -59,11 +59,10 @@ TO DO:
 - [ ] Add support for Undo
 
 ### Lock Transforms
-Work in progress version of an editor script for locking transforms of selected objects.
+For locking transforms of selected objects.
 Made mainly to ease working with UI elements so that it is possible to transform the parent object without affecting the children.
 
 ![LockTransforms](https://github.com/korintic/UnityEditorScripts/blob/master/Images/LockTransforms.png "LockTransforms.cs")
 
 TO DO:
 - [ ] Add support for Undo
-- [ ] Find logic flaw that causes index out of range exceptions at times

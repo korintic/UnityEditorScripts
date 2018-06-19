@@ -65,4 +65,4 @@ Made mainly to ease working with UI elements so that it is possible to transform
 ![LockTransforms](https://github.com/korintic/UnityEditorScripts/blob/master/Images/LockTransforms.png "LockTransforms.cs")
 
 TO DO:
-- [ ] Add support for Undo
+- [ ] Add proper support for Undo

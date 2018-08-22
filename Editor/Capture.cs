@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
@@ -88,18 +88,18 @@ public class Capture : EditorWindow
 
         _overwriteWarning = EditorGUILayout.Toggle("Overwrite warning:", _overwriteWarning);
         _uniqueSuffix = EditorGUILayout.Toggle("Add unique suffix:", _uniqueSuffix);
-        if (!_uniqueSuffix)
+
+        EditorGUI.BeginDisabledGroup(!_uniqueSuffix);
+        _suffixType = (SUFFIXTYPE)EditorGUILayout.EnumPopup("Suffix type:", _suffixType, GUILayout.MaxWidth(250));
+        if(_uniqueSuffix)
         {
-            GUI.enabled = false;
-            EditorGUILayout.EnumPopup("Suffix type:", _suffixType, GUILayout.MaxWidth(250));
-            GUI.enabled = true;
-            _suffix = "";
+            _suffix = "_suffix";
         }
         else
         {
-            _suffixType = (SUFFIXTYPE)EditorGUILayout.EnumPopup("Suffix type:", _suffixType, GUILayout.MaxWidth(250));
-            _suffix = "_suffix";
+            _suffix = "";
         }
+        EditorGUI.EndDisabledGroup();
 
         EditorGUILayout.EndVertical();
         EditorGUILayout.BeginHorizontal();
@@ -240,51 +240,50 @@ public class Capture : EditorWindow
 
     private void CaptureScreen(string pathName, bool isTransparent, int sizeMultiplier, bool captureSceneView)
     {
-        Camera mainCamera;
+        Camera captureCamera;
 
         if (!captureSceneView)
         {
-            mainCamera = Camera.main;
+            captureCamera = Camera.main;
             //If camera to render from is not tagged to be MainCamera use:
-            //mainCamera = GameObject.FindGameObjectWithTag("RenderCamera").GetComponent<Camera>();
-            //Replace "RenderCamera" with the tag of the camera you want to render from.
+            //captureCamera = GameObject.FindGameObjectWithTag("Tag").GetComponent<Camera>();
+            //Replace "Tag" with the tag of the camera you want to render from.
         }
         else
         {
             if(SceneView.GetAllSceneCameras().Length != 0)
             {
-                mainCamera = SceneView.lastActiveSceneView.camera;
+                captureCamera = SceneView.lastActiveSceneView.camera;
             }
             else
             {
                 EditorUtility.DisplayDialog("Alert", "No Scene View found!\nCapturing from Game View.", "OK");
-                mainCamera = Camera.main;
-                //mainCamera = GameObject.FindGameObjectWithTag("RenderCamera").GetComponent<Camera>();
+                captureCamera = Camera.main;
+                //captureCamera = GameObject.FindGameObjectWithTag("Tag").GetComponent<Camera>();
             }
         }
 
-        CameraClearFlags flag = mainCamera.clearFlags;
-        float defaultAspect = mainCamera.aspect;
+        CameraClearFlags flag = captureCamera.clearFlags;
 
         Texture2D tex;
-        RenderTexture renderTex = new RenderTexture(mainCamera.pixelWidth * sizeMultiplier, mainCamera.pixelHeight * sizeMultiplier, 32);
+        RenderTexture renderTex = new RenderTexture(captureCamera.pixelWidth * sizeMultiplier, captureCamera.pixelHeight * sizeMultiplier, 32);
 
         if (isTransparent)
         {
-            tex = new Texture2D(mainCamera.pixelWidth * sizeMultiplier, mainCamera.pixelHeight * sizeMultiplier, TextureFormat.RGBA32, false);
-            mainCamera.clearFlags = CameraClearFlags.Depth;
+            tex = new Texture2D(captureCamera.pixelWidth * sizeMultiplier, captureCamera.pixelHeight * sizeMultiplier, TextureFormat.RGBA32, false);
+            captureCamera.clearFlags = CameraClearFlags.Depth;
         }
         else
         {
-            tex = new Texture2D(mainCamera.pixelWidth * sizeMultiplier, mainCamera.pixelHeight * sizeMultiplier, TextureFormat.RGB24, false);
+            tex = new Texture2D(captureCamera.pixelWidth * sizeMultiplier, captureCamera.pixelHeight * sizeMultiplier, TextureFormat.RGB24, false);
         }
 
-        mainCamera.targetTexture = renderTex;
-        mainCamera.aspect = (float)(mainCamera.pixelWidth * sizeMultiplier) / (float)(mainCamera.pixelHeight * sizeMultiplier);
-        mainCamera.Render();
+        captureCamera.targetTexture = renderTex;
+        captureCamera.aspect = (float)(captureCamera.pixelWidth * sizeMultiplier) / (float)(captureCamera.pixelHeight * sizeMultiplier);
+        captureCamera.Render();
         RenderTexture.active = renderTex;
 
-        tex.ReadPixels(new Rect(0, 0, mainCamera.pixelWidth, mainCamera.pixelHeight), 0, 0, false);
+        tex.ReadPixels(new Rect(0, 0, captureCamera.pixelWidth, captureCamera.pixelHeight), 0, 0, false);
 
         //Unpremultiply alpha
         if (isTransparent)
@@ -310,12 +309,12 @@ public class Capture : EditorWindow
 
         if (isTransparent)
         {
-            mainCamera.clearFlags = flag;
+            captureCamera.clearFlags = flag;
         }
 
         RenderTexture.active = null;
-        mainCamera.targetTexture = null;
-        mainCamera.aspect = defaultAspect;
+        captureCamera.targetTexture = null;
+        captureCamera.ResetAspect();
         DestroyImmediate(renderTex);
         DestroyImmediate(tex);
     }

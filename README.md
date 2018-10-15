@@ -74,5 +74,5 @@ Target Transform fields updates the transforms imidiately and Source Transform a
 
 ![Control RectTransform](https://github.com/korintic/UnityEditorScripts/blob/master/Images/ControlRectTransform.png "ControlRectTransform.cs")
 
-Note: The anchor preset window is not functional on the custom editor window.
+Note: The anchor preset window is not functional on the custom editor window.\
 Note: Another possibly approach for bypassing this bug would have been to rebuild the affected gameobject to get the fields unlocked.

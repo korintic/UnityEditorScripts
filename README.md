@@ -68,7 +68,7 @@ TO DO:
 - [ ] Add support for Undo
 
 ### Control RectTransform
-For bypassing the Unity bug that sometimes recttransform fields stay locked if you delete a layout element or group component.\
+For bypassing the Unity bug that sometimes recttransform fields stay locked if you delete a layout element or group component.
 Issue tracker shows that this bug should be fixed by Unity in 2018.3 beta but this editor script offers a workaround for other versions of Unity.\
 Target Transform fields updates the transforms immediately and Source Transform allows for setting specific values before applying them.
 

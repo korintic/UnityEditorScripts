@@ -93,14 +93,10 @@ public class LockTransforms : EditorWindow
             {
                 _hasChanged = true;
                 LockSelected();
-                // Undo.SetCurrentGroupName("Lock objects");
-                // int undoGroup = Undo.GetCurrentGroup();
                 for (int i = 0; i < _transformsToLock.Count; i++)
                 {
-                    // Undo.RecordObject(_transformsToLock[i], "Lock object");
                     UpdateLockedTransforms(i);
                 }
-                // Undo.CollapseUndoOperations(undoGroup);
                 EditorApplication.update += OnUpdate;
                 _lockLabel = "Unlock";
                 _isLocked = true;

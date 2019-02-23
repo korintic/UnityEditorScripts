@@ -50,7 +50,11 @@ Made mainly to ease working with UI elements so that it is possible to transform
 ![LockTransforms](https://github.com/korintic/UnityEditorScripts/blob/master/Images/LockTransforms.png "LockTransforms.cs")
 
 TO DO:
-- [ ] Add proper support for Undo
+- [ ] Add proper support for Undo. Currently Undo doesn't work with rectTransform elements.
+
+NOTE:
+- Rotating no-uniformly scaled parent object of the will make the locked children skew. This problem only occurs with the rotate tool (E) but not while roting UI element with the rect tool (T).
+- While 3D objects correctly support undo UI elements do not. With UI elements (rectTransform) undo works correctly while elements are locked. However after unlocking  it is not adviced to undo into operations performed while objects were locked as this causes undesired behaviour. This can be prevented by locking the objects again before performing the undo operations.
 
 ### Snapshot Mesh
 Work in progress version of an editor script for taking snapshots of skinned meshes.

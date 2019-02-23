@@ -4,6 +4,8 @@ Collection of simple Unity editor scripts written to improve workflow and learn 
 ## Editor Scripts
 These scripts work when they are located in an Editor folder in a Unity project.
 
+---
+
 ### Capture
 For capturing screenshots. 
 Uses camera with MainCamera tag.

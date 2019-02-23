@@ -55,7 +55,7 @@ TO DO:
 - [ ] Add proper support for Undo. Currently Undo doesn't work with rectTransform elements.
 
 NOTE:
-- Rotating no-uniformly scaled parent object will make the locked children skew. This problem only occurs with the rotate tool (E) but not while roting UI element with the rect tool (T).
+- Rotating non-uniformly scaled parent object will make the locked children skew. This problem only occurs with the rotate tool (E) but not while roting UI element with the rect tool (T).
 - While 3D objects correctly support undo UI elements do not. With UI elements (rectTransform) undo works correctly while elements are locked. However after unlocking  it is not adviced to undo into operations performed while objects were locked as this causes undesired behaviour. This can be prevented by locking the objects again before performing the undo operations.
 
 ### Snapshot Mesh

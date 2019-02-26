@@ -48,6 +48,7 @@ Parents selected objects to the active object when SceneView is the active view.
 ### Lock Transforms
 For locking transforms of selected objects.
 Made mainly to ease working with UI elements so that it is possible to transform the parent object without affecting the children.
+Menu item is located under Tools menu.
 
 ![LockTransforms](https://github.com/korintic/UnityEditorScripts/blob/master/Images/LockTransforms.png "LockTransforms.cs")
 
@@ -60,6 +61,7 @@ NOTE:
 
 ### Snapshot Mesh
 Work in progress version of an editor script for taking snapshots of skinned meshes.
+Menu item is located under Tools menu.
 
 ![Snapshot Mesh](https://github.com/korintic/UnityEditorScripts/blob/master/Images/SnapshotMesh.png "SnapshotMesh.cs")
 
@@ -77,6 +79,7 @@ TO DO:
 For bypassing the Unity bug that sometimes recttransform fields stay locked if you delete a layout element or group component.
 Issue tracker shows that this bug should be fixed by Unity in 2018.3 beta but this editor script offers a workaround for other versions of Unity.\
 Target Transform fields updates the transforms immediately and Source Transform allows for setting specific values before applying them.
+Menu item is located under Tools menu.
 
 ![Control RectTransform](https://github.com/korintic/UnityEditorScripts/blob/master/Images/ControlRectTransform.png "ControlRectTransform.cs")
 

@@ -43,7 +43,7 @@ TO DO:
 - [ ] Add check if images are being saved inside the project
 
 ### Process Icons
-Editor for processing icons with Photoshop.
+Editor script for processing icons with Photoshop.
 
 ### ToggleSelection
 For toggling object selection between none and all.

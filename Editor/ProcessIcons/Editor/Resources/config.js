@@ -1,0 +1,1 @@
+config = {"trim":true,"removeMatte":true,"resize":true,"respectAspect":true,"width":96,"height":96,"fuzziness":0,"red":0.0,"green":255.0,"blue":0.0}

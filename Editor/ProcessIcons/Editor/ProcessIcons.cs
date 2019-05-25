@@ -17,12 +17,13 @@ public class ProcessIcons : EditorWindow
     private bool _isExited = false;
     private string _path = "";
 
-    private Color32 _matteColor;
     private bool _showSettingFoldout = true;
     private bool _showIconPathFoldout = false;
     private bool _showPathsFoldout = true;
+    
     private int _iconsToProcess;
     private List<string> _iconPaths;
+
     public class Config
     {
         public bool trim, removeMatte, resize, respectAspect;
@@ -35,6 +36,7 @@ public class ProcessIcons : EditorWindow
     }
 
     public Config config;
+    private Color32 _matteColor;
 
 
     [MenuItem("Tools/Process Icons")]

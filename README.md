@@ -4,6 +4,16 @@ Collection of simple Unity editor scripts written to improve workflow and learn 
 ## Editor Scripts
 These scripts work when they are located in an Editor folder in a Unity project.
 
+#### Scripts:
+* Capture
+* Process Icons
+* ToggleSelection
+* SceneViewParent
+* Lock Transforms
+* Snapshot Mesh
+* Control RectTransform
+
+
 ---
 
 ### Capture
@@ -31,6 +41,9 @@ TO DO:
 - [x] Make a version that captures screenshots with a hotkey based on the preferences set
 - [x] Add option to capture from SceneView
 - [ ] Add check if images are being saved inside the project
+
+### Process Icons
+Editor for processing icons with Photoshop.
 
 ### ToggleSelection
 For toggling object selection between none and all.

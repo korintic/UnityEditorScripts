@@ -48,6 +48,7 @@ public class ProcessIcons : EditorWindow
 
     void OnEnable()
     {
+        Selection.selectionChanged += getSelectedTextures;
         _iconPaths = new List<string>();
         config = new Config();
         ReadConfig();
@@ -73,11 +74,14 @@ public class ProcessIcons : EditorWindow
         _showIconPathFoldout = EditorGUILayout.Foldout(_showIconPathFoldout, "Icon processing settings:");
         if (_showIconPathFoldout)
         {
-            for(int i = 0; i < _iconPaths.Count; i++)
+            if(_iconPaths.Count != 0 || _iconPaths != null)
             {
-                GUI.enabled = false;
-                EditorGUILayout.LabelField(_iconPaths[i]);
-                GUI.enabled = true;
+                for(int i = 0; i < _iconPaths.Count; i++)
+                {
+                    GUI.enabled = false;
+                    EditorGUILayout.LabelField(_iconPaths[i]);
+                    GUI.enabled = true;
+                }
             }
         }
         GUILayout.Space(20f);
@@ -89,7 +93,6 @@ public class ProcessIcons : EditorWindow
             for(int i = 0; i < _iconPaths.Count; i++)
             {
                 RunCMD("/C @\"" + _executablePath + "\" \"" + Path.Combine(Application.dataPath, _iconPaths[i].Substring(7)) + "\" \"" + _scriptPath + "\"");
-            Debug.Log(Path.Combine(Application.dataPath, _iconPaths[i].Substring(7)) );
             }
         }
         GUILayout.FlexibleSpace();
@@ -228,20 +231,25 @@ public class ProcessIcons : EditorWindow
             {
                 string assetPath = AssetDatabase.GetAssetPath(Selection.objects[i]);
                 string extension = Path.GetExtension(assetPath);
-                extension = extension.Substring(1);
-                List<string> extensions = new List<string>{"BMP","EXR","GIF","HDR","IFF","JPG","JPEG","PICT","PNG","PSD","TGA","TIFF"};
-                if(extensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
+                if(extension.Length > 1)
                 {
+                    extension = extension.Substring(1);
+                    List<string> extensions = new List<string>{"BMP","EXR","GIF","HDR","IFF","JPG","JPEG","PICT","PNG","PSD","TGA","TIFF"};
+                    if(extensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
+                    {
                     _iconsToProcess ++;
                     _iconPaths.Add(assetPath);
+                    }
                 }
+                
+
             }
         }
         Repaint();
     }
     private void Update()
     {
-        Selection.selectionChanged += getSelectedTextures;
+        
         if (_isExited)
         {
             AssetDatabase.Refresh();

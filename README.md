@@ -43,7 +43,14 @@ TO DO:
 - [ ] Add check if images are being saved inside the project
 
 ### Process Icons
-Editor script for processing icons with Photoshop.
+Editor script for processing icons with Photoshop. This script makes it possible to batch process selected image files from Unity in Photoshop. It allows user to select a color to remove from the source image, trim the image by transparent pixels and resize it. It is most useful for batch processing raw images taken inside of Unity to game ready icons. Menu item is located under Tools menu. 
+
+![Process Icons](https://github.com/korintic/UnityEditorScripts/blob/master/Images/ProcessIcons.png "ProcessIcons.cs")
+
+![Process Icons Example](https://github.com/korintic/UnityEditorScripts/blob/master/Images/ProcessIconsExample.png "Process icons example")
+
+TO DO:
+- [ ] Add preserve aspect ratio option to resize
 
 ### ToggleSelection
 For toggling object selection between none and all.

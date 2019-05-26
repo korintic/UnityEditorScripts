@@ -20,6 +20,9 @@ public class ProcessIcons : EditorWindow
     private bool _showSettingFoldout = true;
     private bool _showIconPathFoldout = false;
     private bool _showPathsFoldout = true;
+
+    private bool _isValidExecutablePath = false;
+    private bool _isValidScriptPath = false;
     
     private int _iconsToProcess;
     private List<string> _iconPaths;
@@ -64,14 +67,22 @@ public class ProcessIcons : EditorWindow
                 _scriptPath = Path.GetFullPath(Application.dataPath+"/Editor/Resources/ProcessIcon.jsx");
             }
         }
+        if(_scriptPath.EndsWith(".jsx", true, null))
+        { 
+            _isValidScriptPath = true;
+        }
+        if(_executablePath.EndsWith("Photoshop.exe", true, null))
+        { 
+            _isValidExecutablePath = true;
+        }
     }
 
     private void OnGUI()
     {
         EditorGUILayout.BeginVertical();
         GUILayout.Space(20f);
-        EditorGUILayout.LabelField("Icons to process:" + _iconsToProcess, EditorStyles.boldLabel);
-        _showIconPathFoldout = EditorGUILayout.Foldout(_showIconPathFoldout, "Icon processing settings:");
+        EditorGUILayout.LabelField("Icons to process: " + _iconsToProcess, EditorStyles.boldLabel);
+        _showIconPathFoldout = EditorGUILayout.Foldout(_showIconPathFoldout, "Selected icons:");
         if (_showIconPathFoldout)
         {
             if(_iconPaths.Count != 0 || _iconPaths != null)
@@ -139,7 +150,7 @@ public class ProcessIcons : EditorWindow
 
             EditorGUILayout.Space();
             EditorGUI.BeginChangeCheck();
-            config.trim = EditorGUILayout.Toggle(new GUIContent("Trim", "Trims the icon base on transparent pixels"), config.trim);
+            config.trim = EditorGUILayout.Toggle(new GUIContent("Trim", "Trims the icon based on transparent pixels"), config.trim);
             if(EditorGUI.EndChangeCheck())
             {
                 WriteConfig();
@@ -203,6 +214,14 @@ public class ProcessIcons : EditorWindow
                     _executablePath = Application.dataPath;
                 }
                 _executablePath = setFilePath(_executablePath, "Select Photoshop.exe", "exe");
+                if(_executablePath.EndsWith("Photoshop.exe", true, null))
+                { 
+                    _isValidExecutablePath = true;
+                }
+                else
+                {
+                    _isValidExecutablePath = false;
+                }
             }
             EditorGUILayout.Space();
             GUI.enabled = false;
@@ -215,38 +234,28 @@ public class ProcessIcons : EditorWindow
                     _scriptPath = Application.dataPath;
                 }
                 _scriptPath = setFilePath(_scriptPath, "Select ExtendScript", "jsx");
+                if(_scriptPath.EndsWith(".jsx", true, null))
+                { 
+                   _isValidScriptPath = true;
+                }
+                else
+                {
+                    _isValidScriptPath = false;
+                }            
             }
         }
         GUILayout.Space(20f);
+        if(!_isValidExecutablePath)
+        {
+            EditorGUILayout.HelpBox("Path to Photoshop.exe is not valid!",MessageType.Error);
+        }
+        if(!_isValidScriptPath)
+        {
+            EditorGUILayout.HelpBox("Path to ExtendScript is not valid!",MessageType.Error);
+        }
         EditorGUILayout.EndVertical();
     }
 
-    private void getSelectedTextures()
-    {
-        _iconPaths.Clear();
-        _iconsToProcess = 0;
-        for(int i = 0; i < Selection.objects.Length; i++)
-        {
-            if(AssetDatabase.Contains(Selection.objects[i]))
-            {
-                string assetPath = AssetDatabase.GetAssetPath(Selection.objects[i]);
-                string extension = Path.GetExtension(assetPath);
-                if(extension.Length > 1)
-                {
-                    extension = extension.Substring(1);
-                    List<string> extensions = new List<string>{"BMP","EXR","GIF","HDR","IFF","JPG","JPEG","PICT","PNG","PSD","TGA","TIFF"};
-                    if(extensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
-                    {
-                    _iconsToProcess ++;
-                    _iconPaths.Add(assetPath);
-                    }
-                }
-                
-
-            }
-        }
-        Repaint();
-    }
     private void Update()
     {
         
@@ -270,7 +279,33 @@ public class ProcessIcons : EditorWindow
         }
         SaveEditorPrefs();
     }
+    private void getSelectedTextures()
+    {
+        _iconPaths.Clear();
+        _iconsToProcess = 0;
+        for(int i = 0; i < Selection.objects.Length; i++)
+        {
+            if(AssetDatabase.Contains(Selection.objects[i]))
+            {
+                string assetPath = AssetDatabase.GetAssetPath(Selection.objects[i]);
+                string extension = Path.GetExtension(assetPath);
+                if(extension.Length > 1)
+                {
+                    extension = extension.Substring(1);
+                    List<string> extensions = new List<string>{"BMP","EXR","GIF","HDR","IFF","JPG","JPEG","PICT","PNG","PSD","TGA","TIFF"};
+                    if(extensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
+                    {
+                        _iconsToProcess ++;
+                        _iconPaths.Add(assetPath);
+                    }
+                }
+                
 
+            }
+        }
+        Repaint();
+    }
+    
     private string setFilePath(string filePath, string text, string extension)
     {
         if (File.Exists(filePath))

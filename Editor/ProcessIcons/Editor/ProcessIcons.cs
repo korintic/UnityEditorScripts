@@ -162,7 +162,6 @@ public class ProcessIcons : EditorWindow
                 WriteConfig();
             }
 
-
             EditorGUILayout.Space();
             EditorGUI.BeginChangeCheck();
             config.resize = EditorGUILayout.Toggle("Resize Image", config.resize);
@@ -171,7 +170,6 @@ public class ProcessIcons : EditorWindow
                 WriteConfig();
             }
             EditorGUI.BeginChangeCheck();
-
 
             EditorGUI.BeginDisabledGroup(!config.resize);
             EditorGUI.BeginChangeCheck();
@@ -258,7 +256,6 @@ public class ProcessIcons : EditorWindow
 
     private void Update()
     {
-        
         if (_isExited)
         {
             AssetDatabase.Refresh();

@@ -52,6 +52,10 @@ Editor script for processing icons with Photoshop. This script makes it possible
 TO DO:
 - [ ] Add preserve aspect ratio option to resize
 
+NOTE:
+- Path to Photoshop.exe needs to be defined by the user in the editor window.
+- The script expects ExtendScript(ProcessIcon.jsx) to be in Assets/Editor/Resources folder. If it is elsewhere the user has to set the path to it in the editor window. However the config file needs to be in the same folder as the ExtendScript.
+
 ### ToggleSelection
 For toggling object selection between none and all.
 If something is selected deselects it and if nothing is selected selects everything.

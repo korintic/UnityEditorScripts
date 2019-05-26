@@ -7,8 +7,8 @@ These scripts work when they are located in an Editor folder in a Unity project.
 #### Scripts:
 * Capture
 * Process Icons
-* ToggleSelection
-* SceneViewParent
+* Toggle Selection
+* SceneView Parent
 * Lock Transforms
 * Snapshot Mesh
 * Control RectTransform
@@ -43,16 +43,27 @@ TO DO:
 - [ ] Add check if images are being saved inside the project
 
 ### Process Icons
-Editor script for processing icons with Photoshop.
+Editor script for processing icons with Photoshop. This script makes it possible to batch process selected image files from Unity in Photoshop. It allows user to select a color to remove from the source image, trim the image by transparent pixels and resize it. It is most useful for batch processing raw images taken inside of Unity to game ready icons. Menu item is located under Tools menu. 
 
-### ToggleSelection
+![Process Icons](https://github.com/korintic/UnityEditorScripts/blob/master/Images/ProcessIcons.png "ProcessIcons.cs")
+
+![Process Icons Example](https://github.com/korintic/UnityEditorScripts/blob/master/Images/ProcessIconsExample.png "Process icons example")
+
+TO DO:
+- [ ] Add preserve aspect ratio option to resize
+
+NOTE:
+- Path for Photoshop.exe needs to be set by the user in the editor window. 
+- The script expects that the ExtendScript(ProcessIcon.jsx) is located in Assets/Editor/Resources folder. This is however not mandatory if the user selects the ExtendScript path themself. The config file needs to be in the same folder as the ExtendScript.
+
+### Toggle Selection
 For toggling object selection between none and all.
 If something is selected deselects it and if nothing is selected selects everything.
 Menu item is located under the Edit menu.
 
 **Hotkey** Ctrl+Shift+A
 
-### SceneViewParent
+### SceneView Parent
 For parenting objects while working in the SceneView.
 Parents selected objects to the active object when SceneView is the active view.
 

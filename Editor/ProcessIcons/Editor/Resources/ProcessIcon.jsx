@@ -21,25 +21,25 @@ var maxBlue = 0.0;
 
 try
 {
-  trimImage = config.trim;
-  respectAspect = config.respectAspect;
+    trimImage = config.trim;
+    respectAspect = config.respectAspect;
 
-  resizeImage = config.resize;
-  width = config.width;
-  height = config.height;
+    resizeImage = config.resize;
+    width = config.width;
+    height = config.height;
 
-  removeMatte = config.removeMatte;
-  fuzziness = config.fuzziness;
-  minRed = config.red;
-  minGreen = config.green;
-  minBlue = config.blue;
-  maxRed = config.red;
-  maxGreen = config.green;
-  maxBlue = config.blue;
+    removeMatte = config.removeMatte;
+    fuzziness = config.fuzziness;
+    minRed = config.red;
+    minGreen = config.green;
+    minBlue = config.blue;
+    maxRed = config.red;
+    maxGreen = config.green;
+    maxBlue = config.blue;
 }
 catch(e)
 {
-  alert("Config file not found.");
+    alert("Config file not found.");
 }
 
 ProcessIcon();
@@ -48,11 +48,11 @@ function ProcessIcon()
 {
     if(removeMatte)
     {
-    SelectByColorRange();
-    if(IsSelected())
-    {
-        doc.selection.clear()
-    }
+        SelectByColorRange();
+        if(IsSelected())
+        {
+            doc.selection.clear()
+        }
     }
 
     if(trimImage)
@@ -78,61 +78,61 @@ function ProcessIcon()
 
 function SelectByColorRange() 
 {
-  var idSelectByColorRange = charIDToTypeID("ClrR");
-  var selectByColorOptions = new ActionDescriptor();
-  var colorModel = charIDToTypeID("RGBC");
+    var idSelectByColorRange = charIDToTypeID("ClrR");
+    var selectByColorOptions = new ActionDescriptor();
+    var colorModel = charIDToTypeID("RGBC");
   
-  // Set fuzziness value
-  var idFzns = charIDToTypeID("Fzns");
-  selectByColorOptions.putInteger(idFzns, 0);
+    // Set fuzziness value
+    var idFzns = charIDToTypeID("Fzns");
+    selectByColorOptions.putInteger(idFzns, 0);
 
-  // Set min colors values for selection
-  var idMnm = charIDToTypeID("Mnm ");
-  var minColorValues = new ActionDescriptor();
-  var red = charIDToTypeID("Rd  ");
-  minColorValues.putDouble(red, minRed);
-  var green = charIDToTypeID("Grn ");
-  minColorValues.putDouble(green, minGreen);
-  var blue = charIDToTypeID("Bl  ");
-  minColorValues.putDouble(blue, minBlue);
-  selectByColorOptions.putObject(idMnm, colorModel, minColorValues);
+    // Set min colors values for selection
+    var idMnm = charIDToTypeID("Mnm ");
+    var minColorValues = new ActionDescriptor();
+    var red = charIDToTypeID("Rd  ");
+    minColorValues.putDouble(red, minRed);
+    var green = charIDToTypeID("Grn ");
+    minColorValues.putDouble(green, minGreen);
+    var blue = charIDToTypeID("Bl  ");
+    minColorValues.putDouble(blue, minBlue);
+    selectByColorOptions.putObject(idMnm, colorModel, minColorValues);
 
-  // Set max colors values for selection
-  var idMxm = charIDToTypeID("Mxm ");
-  var maxColorValues = new ActionDescriptor();
-  var red = charIDToTypeID("Rd  ");
-  maxColorValues.putDouble(red, maxRed);
-  var green = charIDToTypeID("Grn ");
-  maxColorValues.putDouble(green, maxGreen);
-  var blue = charIDToTypeID("Bl  ");
-  maxColorValues.putDouble(blue, maxBlue);
-  selectByColorOptions.putObject(idMxm, colorModel, maxColorValues);
+    // Set max colors values for selection
+    var idMxm = charIDToTypeID("Mxm ");
+    var maxColorValues = new ActionDescriptor();
+    var red = charIDToTypeID("Rd  ");
+    maxColorValues.putDouble(red, maxRed);
+    var green = charIDToTypeID("Grn ");
+    maxColorValues.putDouble(green, maxGreen);
+    var blue = charIDToTypeID("Bl  ");
+    maxColorValues.putDouble(blue, maxBlue);
+    selectByColorOptions.putObject(idMxm, colorModel, maxColorValues);
   
-  var idcolorModel = stringIDToTypeID("colorModel");
-  selectByColorOptions.putInteger(idcolorModel, 0);
-  executeAction(idSelectByColorRange, selectByColorOptions, DialogModes.NO);
+    var idcolorModel = stringIDToTypeID("colorModel");
+    selectByColorOptions.putInteger(idcolorModel, 0);
+    executeAction(idSelectByColorRange, selectByColorOptions, DialogModes.NO);
 }
 
 function DoResize(width, height) 
 {
-  var userUnits = preferences.rulerUnits;
+    var userUnits = preferences.rulerUnits;
 
-  if (preferences.rulerUnits != Units.PIXELS) 
-  {
-    preferences.rulerUnits = Units.PIXELS;
-  }
+    if (preferences.rulerUnits != Units.PIXELS) 
+    {
+        preferences.rulerUnits = Units.PIXELS;
+    }
 
-  doc.resizeImage(UnitValue(width, "px"), UnitValue(height, "px"), 72, ResampleMethod.AUTOMATIC, 0);
-  preferences.rulerUnits = userUnits;
+    doc.resizeImage(UnitValue(width, "px"), UnitValue(height, "px"), 72, ResampleMethod.AUTOMATIC, 0);
+    preferences.rulerUnits = userUnits;
 }
 
 function SaveAsPNG(saveFile) 
 {
-  var saveOptions = new PNGSaveOptions();
-  saveOptions.compression = 9;
-  saveOptions.interlaced = false;
+    var saveOptions = new PNGSaveOptions();
+    saveOptions.compression = 9;
+    saveOptions.interlaced = false;
 
-  activeDocument.saveAs(saveFile, saveOptions, true, Extension.LOWERCASE);
+    activeDocument.saveAs(saveFile, saveOptions, true, Extension.LOWERCASE);
 }
 
 function IsSelected() 
@@ -142,8 +142,8 @@ function IsSelected()
     doc.selection.deselect(); 
     if (state != doc.activeHistoryState) 
     { 
-      isSelected = true; 
-      doc.activeHistoryState = state; 
+        isSelected = true; 
+        doc.activeHistoryState = state; 
     } 
     return isSelected; 
 }

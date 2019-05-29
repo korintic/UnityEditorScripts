@@ -7,8 +7,8 @@ These scripts work when they are located in an Editor folder in a Unity project.
 #### Scripts:
 * Capture
 * Process Icons
-* ToggleSelection
-* SceneViewParent
+* Toggle Selection
+* SceneView Parent
 * Lock Transforms
 * Snapshot Mesh
 * Control RectTransform
@@ -56,14 +56,14 @@ NOTE:
 - Path to Photoshop.exe needs to be defined by the user in the editor window.
 - The script expects ExtendScript(ProcessIcon.jsx) to be in Assets/Editor/Resources folder. If it is elsewhere the user has to set the path to it in the editor window. However the config file needs to be in the same folder as the ExtendScript.
 
-### ToggleSelection
+### Toggle Selection
 For toggling object selection between none and all.
 If something is selected deselects it and if nothing is selected selects everything.
 Menu item is located under the Edit menu.
 
 **Hotkey** Ctrl+Shift+A
 
-### SceneViewParent
+### SceneView Parent
 For parenting objects while working in the SceneView.
 Parents selected objects to the active object when SceneView is the active view.
 

@@ -22,9 +22,18 @@ var maxBlue = 0.0;
 try
 {
     trimImage = config.trim;
-    respectAspect = config.respectAspect;
+    toSquare = config.toSquare;
 
     resizeImage = config.resize;
+    absolute = config.absolute;
+    bySide = config.bySide;
+    isBySide = config.isBySide;
+    isBySideWidth = config.isBySideWidth;
+    isBySideHeight = config.isBySideHeight
+    isMultiplied = config.isMultiplied;
+    multiplier = config.multiplier;
+    bySideWidth = config.bySideWidth;
+    bySideHeight =  config.bySideHeight;
     width = config.width;
     height = config.height;
 
@@ -39,7 +48,7 @@ try
 }
 catch(e)
 {
-    alert("Config file not found.");
+    alert("All valid configs not found. Check config file.");
 }
 
 ProcessIcon();
@@ -60,15 +69,16 @@ function ProcessIcon()
         doc.trim(TrimType.TRANSPARENT);
     }
 
-    if(respectAspect)
+    if(resizeImage)
+    {
+        var size = CalculateNewSize();
+        DoResize(size.width, size.height);
+    }
+
+    if(toSquare)
     {
         var largerDimension = Math.max(doc.height.as('px'), doc.width.as('px'));
         doc.resizeCanvas(largerDimension, largerDimension, AnchorPosition.MIDDLECENTER);
-    }
-
-    if(resizeImage)
-    {
-        DoResize(width, height);
     }
 
     activeDocument.save();
@@ -84,7 +94,7 @@ function SelectByColorRange()
   
     // Set fuzziness value
     var idFzns = charIDToTypeID("Fzns");
-    selectByColorOptions.putInteger(idFzns, 0);
+    selectByColorOptions.putInteger(idFzns, fuzziness);
 
     // Set min colors values for selection
     var idMnm = charIDToTypeID("Mnm ");
@@ -113,7 +123,7 @@ function SelectByColorRange()
     executeAction(idSelectByColorRange, selectByColorOptions, DialogModes.NO);
 }
 
-function DoResize(width, height) 
+function CalculateNewSize()
 {
     var userUnits = preferences.rulerUnits;
 
@@ -122,8 +132,55 @@ function DoResize(width, height)
         preferences.rulerUnits = Units.PIXELS;
     }
 
-    doc.resizeImage(UnitValue(width, "px"), UnitValue(height, "px"), 72, ResampleMethod.AUTOMATIC, 0);
+    var newWidth;
+    var newHeight;
+    if(absolute)
+    {
+        newWidth = width;
+        newHeight = height;
+    }
+    else if(bySide)
+    {
+        if(isBySideWidth)
+        {
+            newWidth = bySideWidth;
+            newHeight = Math.round(newWidth * doc.height / doc.width);
+        }
+        if(isBySideHeight)
+        {
+            newHeight = bySideHeight;
+            newWidth = Math.round(newHeight * doc.width / doc.height);
+            // alert("Width: "+newWidth+"\nHeight: "+newHeight);
+        }
+    }
+    else if(isMultiplied)
+    {
+        newWidth = Math.round(doc.width * multiplier);
+        newHeight = Math.round(doc.height * multiplier);
+    }
+    else
+    {
+        newWidth = doc.width;
+        newHeight = doc.height;
+        alert("Something went wrong! New sizes were not calculated.")
+    }
+    newWidth = Math.max(newWidth, 1);
+    newHeight = Math.max(newHeight, 1);
     preferences.rulerUnits = userUnits;
+    return {width: newWidth, height : newHeight};
+}
+
+function DoResize(width, height) 
+{
+    var userUnits = app.preferences.rulerUnits;
+
+    if (app.preferences.rulerUnits != Units.PIXELS) 
+    {
+        app.preferences.rulerUnits = Units.PIXELS;
+    }
+
+    doc.resizeImage(UnitValue(width, "px"), UnitValue(height, "px"), 72, ResampleMethod.AUTOMATIC, 0);
+    app.preferences.rulerUnits = userUnits;
 }
 
 function SaveAsPNG(saveFile) 

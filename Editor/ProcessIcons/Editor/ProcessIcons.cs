@@ -16,6 +16,7 @@ public class ProcessIcons : EditorWindow
     private string _scriptPath;
     private bool _isExited = false;
     private string _path = "";
+    private string _configPath = "";
 
     private bool _showSettingFoldout = true;
     private bool _showIconPathFoldout = false;
@@ -27,11 +28,24 @@ public class ProcessIcons : EditorWindow
     private int _iconsToProcess;
     private List<string> _iconPaths;
 
+    // GUI CONTENT ELEMENT NAMES AND TOOL TIPS
+    private GUIContent _processIconsGC;
+    private GUIContent _trimGC;
+    private GUIContent _toSquareGC;
+    private GUIContent _resizeGC;
+    private GUIContent _fuzzinessGC;
+    private GUIContent _absoluteGC;
+    private GUIContent _bySideGC;
+    private GUIContent _multiplierGC;
+    private GUIContent _selectScriptGC;
+    private GUIContent _selectPhotoshopPathGC;
+
+
     public class Config
     {
-        public bool trim, removeMatte, resize, respectAspect;
-        public int width, height, fuzziness;
-        public float red, green, blue;
+        public bool trim, removeMatte, resize, absolute, bySide, isBySideWidth, isBySideHeight, isMultiplied, toSquare;
+        public int width, height, fuzziness, bySideWidth, bySideHeight;
+        public float red, green, blue, multiplier;
         public void Load(string savedData)
         {
             JsonUtility.FromJsonOverwrite(savedData, this);
@@ -51,9 +65,23 @@ public class ProcessIcons : EditorWindow
 
     void OnEnable()
     {
+        _processIconsGC = new GUIContent("Process Icons", "Processes icons with Photoshop");
+        _trimGC = new GUIContent("Trim", "Trims the icon based on transparent pixels");
+        _toSquareGC = new GUIContent("To Square", "Resizes canvas according to longer side \nOperation is done from middle center \nHappens after resizing");
+        _absoluteGC = new GUIContent("Absolute","Resize by provided absolute side lengths in pixels");
+        _bySideGC = new GUIContent("By Side","Resize by ratio based on the provided side length in pixels");
+        _multiplierGC = new GUIContent("Multiplier","Resize by multiplying the side lengths with the provided multiplier");
+        _selectScriptGC = new GUIContent("Select Script", "Select path to ExtendScript to run");
+        _selectPhotoshopPathGC = new GUIContent("Select Photoshop Path", "Select path to Photoshop.exe");
+
         Selection.selectionChanged += getSelectedTextures;
         _iconPaths = new List<string>();
         config = new Config();
+        config.width = 1;
+        config.height = 1;
+        config.bySideWidth = 1;
+        config.bySideHeight = 1;
+        config.multiplier = 1;
         ReadConfig();
         _matteColor.r = (byte)config.red;
         _matteColor.g = (byte)config.green;
@@ -99,8 +127,12 @@ public class ProcessIcons : EditorWindow
 
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
-        if (GUILayout.Button(new GUIContent("Process Icons", "Processes icons with Photoshop"), GUILayout.Width(Screen.width / 2 + 4), GUILayout.Height(40)))
+        if (GUILayout.Button(_processIconsGC, GUILayout.Width(Screen.width / 2 + 4), GUILayout.Height(40)))
         {
+            if(Path.GetDirectoryName(_configPath) != Path.GetDirectoryName(_scriptPath))
+            {
+                File.Copy(_configPath, Path.Combine(Path.GetDirectoryName(_scriptPath),"config.js"));
+            }
             for(int i = 0; i < _iconPaths.Count; i++)
             {
                 RunCMD("/C @\"" + _executablePath + "\" \"" + Path.Combine(Application.dataPath, _iconPaths[i].Substring(7)) + "\" \"" + _scriptPath + "\"");
@@ -118,7 +150,7 @@ public class ProcessIcons : EditorWindow
             config.removeMatte = EditorGUILayout.Toggle("Remove Matte", config.removeMatte);
             if(EditorGUI.EndChangeCheck())
             {
-                WriteConfig();
+                WriteConfig(ref _configPath);
             }
 
             EditorGUI.BeginDisabledGroup(!config.removeMatte);
@@ -129,83 +161,170 @@ public class ProcessIcons : EditorWindow
                 config.red = _matteColor.r;
                 config.green = _matteColor.g;
                 config.blue = _matteColor.b;
-                WriteConfig();
+                WriteConfig(ref _configPath);
             }
 
             EditorGUI.BeginChangeCheck();
             config.fuzziness = EditorGUILayout.IntField("Matte Fuzziness",config.fuzziness, GUILayout.Width(Screen.width / 1.96f));
             if(EditorGUI.EndChangeCheck())
             {
-                if(config.fuzziness < 0)
-                {
-                    config.fuzziness = 0;
-                }
-                else if(config.fuzziness > 200)
-                {
-                    config.fuzziness = 200;
-                }
-                WriteConfig();
+                config.fuzziness = Mathf.Clamp(config.fuzziness,0,200);
+                WriteConfig(ref _configPath);
             }
             EditorGUI.EndDisabledGroup();
 
             EditorGUILayout.Space();
             EditorGUI.BeginChangeCheck();
-            config.trim = EditorGUILayout.Toggle(new GUIContent("Trim", "Trims the icon based on transparent pixels"), config.trim);
+            config.trim = EditorGUILayout.Toggle(_trimGC, config.trim);
             if(EditorGUI.EndChangeCheck())
             {
-                WriteConfig();
+                WriteConfig(ref _configPath);
             }
             EditorGUI.BeginChangeCheck();
-            config.respectAspect = EditorGUILayout.Toggle(new GUIContent("Resize Canvas", "Resizes canvas after trim operation so that both sides equal the longer side"), config.respectAspect);
+            config.toSquare = EditorGUILayout.Toggle(_toSquareGC, config.toSquare);
             if(EditorGUI.EndChangeCheck())
             {
-                WriteConfig();
+                WriteConfig(ref _configPath);
             }
 
             EditorGUILayout.Space();
             EditorGUI.BeginChangeCheck();
             config.resize = EditorGUILayout.Toggle("Resize Image", config.resize);
-            if(EditorGUI.EndChangeCheck())
-            {
-                WriteConfig();
-            }
-            EditorGUI.BeginChangeCheck();
-
             EditorGUI.BeginDisabledGroup(!config.resize);
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(_absoluteGC,GUILayout.MaxWidth(55));
             EditorGUI.BeginChangeCheck();
-            config.width = EditorGUILayout.IntField("Width",config.width, GUILayout.Width(Screen.width / 1.96f));
+            config.absolute = EditorGUILayout.Toggle( config.absolute, GUILayout.MaxWidth(20));
+            GUILayout.Space(10);
+            if(EditorGUI.EndChangeCheck() && config.absolute && (config.isMultiplied || config.bySide))
+            {
+                config.isMultiplied = false;
+                config.bySide = false;
+            }
+            EditorGUILayout.LabelField(_bySideGC,GUILayout.MaxWidth(53));
+            EditorGUI.BeginChangeCheck();
+            config.bySide = EditorGUILayout.Toggle(config.bySide, GUILayout.MaxWidth(20));
+            GUILayout.Space(10);
+            if(EditorGUI.EndChangeCheck() && config.bySide && (config.isMultiplied || config.absolute))
+            {
+                config.isMultiplied = false;
+                config.absolute = false;
+            }
+            EditorGUILayout.LabelField(_multiplierGC, GUILayout.MaxWidth(55));
+            EditorGUI.BeginChangeCheck();
+            config.isMultiplied = EditorGUILayout.Toggle( config.isMultiplied, GUILayout.MaxWidth(20));
+            GUILayout.Space(10);
+            if(EditorGUI.EndChangeCheck() && config.isMultiplied && (config.absolute || config.bySide))
+            {
+                config.bySide = false;
+                config.absolute = false;
+            }
+            EditorGUILayout.EndHorizontal();
             if(EditorGUI.EndChangeCheck())
             {
-                if(config.width < 1)
-                {
-                    config.width = 1;
-                }
-                WriteConfig();
+                WriteConfig(ref _configPath);
             }
 
-            EditorGUI.BeginChangeCheck();
-            config.height = EditorGUILayout.IntField("Height",config.height, GUILayout.Width(Screen.width / 1.96f));
-            if(EditorGUI.EndChangeCheck())
+            if(!config.resize || (!config.absolute && !config.bySide && !config.isMultiplied))
             {
-                if(config.height < 1)
+                GUILayout.Space(41f);
+            }
+            if(config.absolute && config.resize)
+            {
+                GUILayout.Space(5f);
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Width", GUILayout.MaxWidth(146));
+                EditorGUI.BeginChangeCheck();
+                config.width = EditorGUILayout.IntField(config.width, GUILayout.MaxWidth(70));
+                if(EditorGUI.EndChangeCheck())
                 {
-                    config.height = 1;
+                    config.width = Mathf.Max(config.width, 1);
+                    WriteConfig(ref _configPath);
                 }
-                WriteConfig();
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Height", GUILayout.MaxWidth(146));
+                EditorGUI.BeginChangeCheck();
+                config.height = EditorGUILayout.IntField(config.height, GUILayout.MaxWidth(70));
+                if(EditorGUI.EndChangeCheck())
+                {
+                    config.height = Mathf.Max(config.height, 1);
+                    WriteConfig(ref _configPath);
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            if(config.bySide && config.resize)
+            {
+                GUILayout.Space(5f);
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Width", GUILayout.MaxWidth(40));
+                EditorGUI.BeginChangeCheck();
+                config.isBySideWidth = EditorGUILayout.Toggle(config.isBySideWidth ,GUILayout.MaxWidth(20));
+                if(EditorGUI.EndChangeCheck() && config.isBySideWidth)
+                {
+                    config.isBySideHeight = false;
+                }
+                GUILayout.Space(82);
+                EditorGUI.BeginDisabledGroup(!config.isBySideWidth);
+                EditorGUI.BeginChangeCheck();
+                config.bySideWidth = EditorGUILayout.IntField(config.bySideWidth, GUILayout.MaxWidth(70));
+                if(EditorGUI.EndChangeCheck())
+                {
+                    config.bySideWidth = Mathf.Max(config.bySideWidth, 1);
+                    WriteConfig(ref _configPath);
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.LabelField("Height", GUILayout.MaxWidth(40));
+                config.isBySideHeight = EditorGUILayout.Toggle(config.isBySideHeight, GUILayout.MaxWidth(20));
+                if(EditorGUI.EndChangeCheck() && config.isBySideHeight)
+                {
+                    config.isBySideWidth = false;
+                }
+                GUILayout.Space(82);
+                EditorGUI.BeginDisabledGroup(!config.isBySideHeight);
+                EditorGUI.BeginChangeCheck();
+                config.bySideHeight = EditorGUILayout.IntField(config.bySideHeight, GUILayout.MaxWidth(70));
+                if(EditorGUI.EndChangeCheck())
+                {
+                    config.bySideHeight = Mathf.Max(config.bySideHeight, 1);
+                    WriteConfig(ref _configPath);
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
+            }
+            if(config.isMultiplied && config.resize)
+            {
+                GUILayout.Space(5f);
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Multiplier", GUILayout.MaxWidth(146));
+                EditorGUI.BeginChangeCheck();
+                config.multiplier = EditorGUILayout.FloatField(config.multiplier, GUILayout.MaxWidth(70));
+                if(EditorGUI.EndChangeCheck())
+                {
+                    config.multiplier = Mathf.Clamp(config.multiplier,0.01f,100);
+                    WriteConfig(ref _configPath);
+                }
+                EditorGUILayout.EndHorizontal();
+                GUILayout.Space(18f);
             }
             EditorGUI.EndDisabledGroup();
         }
 
         GUI.enabled = true;
         GUILayout.Space(20f);
-        _showPathsFoldout = EditorGUILayout.Foldout(_showPathsFoldout, "Settings:");
+        _showPathsFoldout = EditorGUILayout.Foldout(_showPathsFoldout, "Paths:");
         if (_showPathsFoldout)
         {
             EditorGUILayout.Space();
             GUI.enabled = false;
             EditorGUILayout.LabelField(_executablePath);
             GUI.enabled = true;
-            if (GUILayout.Button(new GUIContent("Select Photoshop Path", "Select path to Photoshop.exe")))
+            if (GUILayout.Button(_selectPhotoshopPathGC))
             {
                 if(_executablePath == null || _executablePath == "")
                 {
@@ -225,7 +344,7 @@ public class ProcessIcons : EditorWindow
             GUI.enabled = false;
             EditorGUILayout.LabelField(_scriptPath);
             GUI.enabled = true;
-            if (GUILayout.Button(new GUIContent("Select Script", "Select path to ExtendScript to run")))
+            if (GUILayout.Button(_selectScriptGC))
             {
                 if(_scriptPath == null || _scriptPath == "")
                 {
@@ -353,18 +472,23 @@ public class ProcessIcons : EditorWindow
         EditorPrefs.SetString(prefsScriptPath, _scriptPath);
     }
 
-    private void WriteConfig()
+    private void WriteConfig(ref string filePath)
     {
         string configJson = JsonUtility.ToJson(config);
         configJson = "config = " + configJson;
-        string filePath;
         if(File.Exists(_scriptPath))
         {
             filePath = Path.Combine(Path.GetDirectoryName(_scriptPath), "config.js");
         }
         else
         {
-            filePath = Path.Combine(Application.dataPath,"Editor/Resources/config.js");
+            filePath = Path.Combine(Path.Combine(Application.dataPath,"Editor"),"Resources");
+            if(!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+                AssetDatabase.Refresh();
+            }
+            filePath = Path.Combine(filePath, "config.js");
         }
         File.WriteAllText (filePath, configJson);
         AssetDatabase.Refresh();
@@ -390,7 +514,10 @@ public class ProcessIcons : EditorWindow
         }
         else
         {
-            EditorUtility.DisplayDialog("Alert", "No config file found!", "OK");
+            if(EditorUtility.DisplayDialog("No Config File Found", "Do you want to write default config in editor resources folder?", "OK", "CANCEL"))
+            {
+                WriteConfig(ref _configPath);
+            }
         }
     }
 }

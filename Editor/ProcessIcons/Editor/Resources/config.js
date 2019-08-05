@@ -1,1 +1,1 @@
-config = {"trim":true,"removeMatte":true,"resize":true,"respectAspect":true,"width":96,"height":96,"fuzziness":0,"red":0.0,"green":255.0,"blue":0.0}
+config = {"trim":true,"removeMatte":true,"resize":true,"absolute":true,"bySide":false,"isBySideWidth":false,"isBySideHeight":true,"isMultiplied":false,"toSquare":true,"width":64,"height":64,"fuzziness":0,"bySideWidth":64,"bySideHeight":64,"red":0.0,"green":255.0,"blue":0.0,"multiplier":1.0}

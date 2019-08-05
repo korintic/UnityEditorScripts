@@ -50,7 +50,9 @@ Editor script for processing icons with Photoshop. This script makes it possible
 ![Process Icons Example](https://github.com/korintic/UnityEditorScripts/blob/master/Images/ProcessIconsExample.png "Process icons example")
 
 TO DO:
-- [ ] Add preserve aspect ratio option to resize
+- [x] Add new resize options
+- [ ] Update config saving and loading logic
+- [ ] Rename to process images
 
 NOTE:
 - Path to Photoshop.exe needs to be defined by the user in the editor window.

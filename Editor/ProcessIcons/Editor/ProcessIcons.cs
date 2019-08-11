@@ -131,7 +131,7 @@ public class ProcessIcons : EditorWindow
         {
             if(Path.GetDirectoryName(_configPath) != Path.GetDirectoryName(_scriptPath))
             {
-                File.Copy(_configPath, Path.Combine(Path.GetDirectoryName(_scriptPath),"config.js"));
+                File.Copy(_configPath, Path.Combine(Path.GetDirectoryName(_scriptPath),"config.js"), true);
             }
             for(int i = 0; i < _iconPaths.Count; i++)
             {

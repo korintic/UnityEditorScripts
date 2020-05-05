@@ -5,7 +5,7 @@ Collection of simple Unity editor scripts written to improve workflow and learn 
 These scripts work when they are located in an Editor folder in a Unity project.
 
 #### Scripts:
-* Capture](#Capture)
+* [Capture](#Capture)
 * [Process Icons](#Process Icons)
 * [Toggle Selection](#Toggle Selection)
 * [SceneView Parent](#SceneView Parent)

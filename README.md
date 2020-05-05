@@ -6,12 +6,12 @@ These scripts work when they are located in an Editor folder in a Unity project.
 
 #### Scripts:
 * [Capture](#Capture)
-* [Process Icons](#Process Icons)
-* [Toggle Selection](#Toggle Selection)
-* [SceneView Parent](#SceneView Parent)
-* [Lock Transforms](#Lock Transforms)
-* [Snapshot Mesh](#Snapshot Mesh)
-* [Control RectTransform](#Control RectTransform)
+* [Process Icons](#Process-Icons)
+* [Toggle Selection](#Toggle-Selection)
+* [SceneView Parent](#SceneView-Parent)
+* [Lock Transforms](#Lock-Transforms)
+* [Snapshot Mesh](#Snapshot-Mesh)
+* [Control RectTransform](#Control-RectTransform)
 
 
 ---

@@ -1,6 +1,15 @@
 # Unity Editor Scripts
 Collection of simple Unity editor scripts written to improve workflow and learn C# and Unity editor scripting at the same time.
 
+---
+### ⚠️ Important Notice
+
+As of 2024, these Unity editor scripts have not been updated for approximately 5 years. During this time, Unity has released multiple updates which may have introduced changes that affect the functionality of these scripts. Due to these updates, the scripts may not function as intended with current or future versions of Unity.
+
+**Users are advised to use these scripts with caution as they may require modifications to work correctly with newer versions of Unity.**
+
+---
+
 ## Editor Scripts
 These scripts work when they are located in an Editor folder in a Unity project.
 
